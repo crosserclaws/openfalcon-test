@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"time"
 
@@ -12,16 +13,44 @@ import (
 var (
 	agentConfig string = "agent.json"
 	judgeConfig string = "judge.json"
+	fnList      []func()
 )
 
 func main() {
+	var loop, step int
+	var mode string
+	flag.IntVar(&loop, "loop", 1, "Loop times.")
+	flag.IntVar(&step, "step", 60, "Time interval in sec.")
+	flag.StringVar(&mode, "mode", "all", "[all, hbs, transfer].")
+	flag.Parse()
 
-	test_rpc_hbs()
-	test_rpc_transfer()
+	// Check the running mode
+	switch mode {
+	case "hbs":
+		fnList = append(fnList, rpcHbsGetStrategies)
+	case "transfer":
+		fnList = append(fnList, rpcTransferUpdate)
+	case "all":
+		fnList = append(fnList, rpcHbsGetStrategies)
+		fnList = append(fnList, rpcTransferUpdate)
+	default:
+		flag.Usage()
+	}
 
+	// Run periodically
+	for i := 0; i < loop; i++ {
+		fmt.Printf("[LOOP.] # %3d\n", i)
+		for _, fn := range fnList {
+			fn()
+		}
+		if i+1 < loop {
+			time.Sleep(time.Duration(step) * time.Second)
+			fmt.Println("")
+		}
+	}
 }
 
-func test_rpc_hbs() {
+func rpcHbsGetStrategies() {
 	jg.ParseConfig(judgeConfig)
 	jg.InitHbsClient()
 
@@ -38,33 +67,23 @@ func test_rpc_hbs() {
 	}
 }
 
-func test_rpc_transfer() {
+func rpcTransferUpdate() {
 	ag.ParseConfig(agentConfig)
 	ag.InitRpcClients()
-	debug := ag.Config().Debug
 
-	// Periodically send metrics
-	for {
-		now := time.Now().Unix()
-		value := now % 100
-		metrics := []*model.MetricValue{}
-		mv := &model.MetricValue{"test-agent", "cpu.idle", value, 60, "GAUGE", "module=transfer-test", now}
-		metrics = append(metrics, mv)
+	now := time.Now().Unix()
+	value := now % 100
+	metrics := []*model.MetricValue{}
+	mv := &model.MetricValue{"test-agent", "cpu.idle", value, 60, "GAUGE", "module=transfer-test", now}
+	metrics = append(metrics, mv)
 
-		if debug {
-			fmt.Printf("=> <Total=%d> %v\n", len(metrics), metrics[0])
-		}
+	fmt.Printf("[REQ .] <Total=%d> %v\n", len(metrics), metrics[0])
 
-		var resp model.TransferResponse
-		err := ag.TransferClient.Call("Transfer.Update", metrics, &resp)
-		if err != nil {
-			fmt.Println("[ERROR] Transfer.Update:", err)
-		}
-
-		if debug {
-			fmt.Println("<=", &resp)
-		}
-
-		time.Sleep(time.Minute)
+	var resp model.TransferResponse
+	err := ag.TransferClient.Call("Transfer.Update", metrics, &resp)
+	if err != nil {
+		fmt.Println("[ERROR] Transfer.Update:", err)
 	}
+
+	fmt.Println("[RESP.]", &resp)
 }
