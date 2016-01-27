@@ -17,6 +17,7 @@ var (
 )
 
 func main() {
+	// Parse cmd-line flags
 	var loop, step int
 	var mode string
 	flag.IntVar(&loop, "loop", 1, "Loop times.")
@@ -24,7 +25,6 @@ func main() {
 	flag.StringVar(&mode, "mode", "all", "[all, hbs, transfer].")
 	flag.Parse()
 
-	// Check the running mode
 	switch mode {
 	case "hbs":
 		fnList = append(fnList, rpcHbsGetStrategies)
@@ -36,14 +36,15 @@ func main() {
 	default:
 		flag.Usage()
 	}
+	// :~)
 
 	// Run periodically
-	for i := 0; i < loop; i++ {
+	for i := 1; i <= loop; i++ {
 		fmt.Printf("[LOOP.] # %3d\n", i)
 		for _, fn := range fnList {
 			fn()
 		}
-		if i+1 < loop {
+		if i < loop {
 			time.Sleep(time.Duration(step) * time.Second)
 			fmt.Println("")
 		}
