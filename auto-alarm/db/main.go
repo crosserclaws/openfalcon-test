@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"reflect"
@@ -15,12 +16,13 @@ var (
 	dbAddr   string = "root:password@tcp(10.20.30.40:3306)/"
 	dbConfig string = "?charset=utf8&loc=Asia%2FTaipei"
 
-	testID    int    = 7777
-	testAgent string = "test-agent"
-	timeStamp string = time.Now().Format("2006-01-02 15:04:05")
-	userList         = []User{
+	testIdBase int    = 7777
+	testIdLast int    = testIdBase + int('z')
+	testAgent  string = "test-agent"
+	timeStamp  string = time.Now().Format("2006-01-02 15:04:05")
+	userList          = []User{
 		{1, "root", "070424e5398ec581c27100a0d63fc86e", "", 2},
-		{testID, "cheminlin", "a5b8fedaf75e5396b3ae2c6e60b55da6", "cheminlin@cepave.com", 2},
+		{testIdBase, "cheminlin", "a5b8fedaf75e5396b3ae2c6e60b55da6", "cheminlin@cepave.com", 2},
 	}
 )
 
@@ -32,48 +34,111 @@ type User struct {
 	Role   int
 }
 
-type DbFlow struct {
+type DbCase struct {
 	DbName string
-	FnList []FnFlow
+	FnFlow []FnVar
 }
 
-type FnFlow func(*sql.DB) []error
+type FnVar func(*sql.DB) []error
 
 func main() {
+	// Parse cmd-line flags
+	var mode string
+	flag.StringVar(&mode, "mode", "",
+		"[cab | clean | build]\n\t"+
+			"build  - Build data. (DB must be clean before build if DB is not empty.)\n\t"+
+			"cab    - Clean & Build.\n\t"+
+			"clean  - Clean data.\n\t")
+	flag.Parse()
 
-	var dbList = []DbFlow{
-		{"falcon_portal", []FnFlow{initTbAction, initTbHost, initTbTpl, initTbStrategy, initTbGrp, initTbGrpHost, initTbGrpTpl}},
-		{"uic", []FnFlow{initTbUser, initTbTeam, initTbRelTeamUser}},
+	switch mode {
+	case "cab":
+		clean()
+		build()
+	case "clean":
+		clean()
+	case "build":
+		build()
+	default:
+		flag.Usage()
+	}
+	// :~)
+
+}
+
+func build() {
+	var dbSuite = []DbCase{
+		{"falcon_portal", []FnVar{initTbAction, initTbHost, initTbTpl, initTbStrategy, initTbGrp, initTbGrpHost, initTbGrpTpl}},
+		{"uic", []FnVar{initTbUser, initTbTeam, initTbRelTeamUser}},
 	}
 
-	for _, flow := range dbList {
-		runDbFlow(flow)
+	for _, dc := range dbSuite {
+		runDbFlow(dc)
 	}
 }
 
-func runDbFlow(flow DbFlow) {
-	// Connect to a DB
-	dbName := dbAddr + flow.DbName + dbConfig
-	db, err := sql.Open("mysql", dbName)
-	if err != nil {
-		log.Fatalf("[Addr=%s] %v\n", dbName, err)
-	}
+func clean() {
+	cleanDb("uic", "id", "user", "team", "rel_team_user")
+	cleanDb("falcon_portal", "id", "action", "grp", "host", "strategy", "tpl")
+	cleanDb("falcon_portal", "grp_id", "grp_host", "grp_tpl")
+}
+
+func cleanDb(dbName string, colName string, tabNames ...string) {
+	db := dbConnect(dbName)
 	defer db.Close()
 
-	for _, ff := range flow.FnList {
+	for _, tab := range tabNames {
+		passFlag := true
+		errList := cleanTabById(db, tab, colName)
+		for _, err := range errList {
+			if err != nil {
+				fmt.Printf("[Db=%s][Tb=%s] %v\n", dbName, tab, err)
+				passFlag = false
+			}
+		}
+		if passFlag {
+			fmt.Printf("[Db=%s][Tb=%s] Pass.\n", dbName, tab)
+		}
+	}
+}
+
+func cleanTabById(db *sql.DB, tabName string, colName string) []error {
+	errList := []error{}
+	stmt := fmt.Sprintf("DELETE FROM %s WHERE %s=?", tabName, colName)
+	for i := testIdBase; i <= testIdLast; i++ {
+		_, err := db.Exec(stmt, i)
+		errList = append(errList, err)
+	}
+	return errList
+}
+
+func runDbFlow(dc DbCase) {
+	db := dbConnect(dc.DbName)
+	defer db.Close()
+
+	for _, ff := range dc.FnFlow {
 		fnName := runtime.FuncForPC(reflect.ValueOf(ff).Pointer()).Name()
 		passFlag := true
 		errList := ff(db)
 		for _, err := range errList {
 			if err != nil {
-				fmt.Printf("[Db=%s][Fn=%s] %v\n", flow.DbName, fnName, err)
+				fmt.Printf("[Db=%s][Fn=%s] %v\n", dc.DbName, fnName, err)
 				passFlag = false
 			}
 		}
 		if passFlag {
-			fmt.Printf("[Db=%s][Fn=%s] Pass.\n", flow.DbName, fnName)
+			fmt.Printf("[Db=%s][Fn=%s] Pass.\n", dc.DbName, fnName)
 		}
 	}
+}
+
+func dbConnect(dbName string) *sql.DB {
+	dbSrc := dbAddr + dbName + dbConfig
+	db, err := sql.Open("mysql", dbSrc)
+	if err != nil {
+		log.Fatalf("[Src=%s] %v\n", dbSrc, err)
+	}
+	return db
 }
 
 func initTbAction(db *sql.DB) []error {
@@ -81,7 +146,7 @@ func initTbAction(db *sql.DB) []error {
 		`
 		INSERT INTO action (id, uic, url, callback, before_callback_sms, before_callback_mail, after_callback_sms, after_callback_mail) 
 		VALUES (?, 'test_user_group', '', 0, 0, 0, 0, 0)
-		`, testID+int('a'))
+		`, testIdBase+int('a'))
 	return []error{err}
 }
 
@@ -90,7 +155,7 @@ func initTbHost(db *sql.DB) []error {
 		`
 		INSERT INTO host (id, hostname, ip, agent_version, plugin_version, maintain_begin, maintain_end, update_at)
 		VALUES (?, ?, '10.20.30.40', '0.0.1', 'plugin not enabled', 0, 0, ?)
-		`, testID+int('h'), testAgent, timeStamp)
+		`, testIdBase+int('h'), testAgent, timeStamp)
 	return []error{err}
 }
 
@@ -99,7 +164,7 @@ func initTbGrp(db *sql.DB) []error {
 		`
 		INSERT INTO grp (id, grp_name, create_user, create_at, come_from)
 		VALUES (?, 'test_host_group', 'root', ?, 1)
-		`, testID+int('g'), timeStamp)
+		`, testIdBase+int('g'), timeStamp)
 	return []error{err}
 }
 
@@ -108,7 +173,7 @@ func initTbGrpHost(db *sql.DB) []error {
 		`
 		INSERT INTO grp_host (grp_id, host_id)
 		VALUES (?, ?)
-		`, testID+int('g'), testID+int('h'))
+		`, testIdBase+int('g'), testIdBase+int('h'))
 	return []error{err}
 }
 
@@ -117,7 +182,7 @@ func initTbGrpTpl(db *sql.DB) []error {
 		`
 		INSERT INTO grp_tpl (grp_id, tpl_id, bind_user)
 		VALUES (?, ?, 'root')
-		`, testID+int('g'), testID+int('t'))
+		`, testIdBase+int('g'), testIdBase+int('t'))
 	return []error{err}
 }
 
@@ -126,7 +191,7 @@ func initTbTpl(db *sql.DB) []error {
 		`
 		INSERT INTO tpl (id, tpl_name, parent_id, action_id, create_user, create_at)
 		VALUES (?, 'test_template', 0, ?, 'root', ?)
-		`, testID+int('t'), testID+int('a'), timeStamp)
+		`, testIdBase+int('t'), testIdBase+int('a'), timeStamp)
 	return []error{err}
 }
 
@@ -135,7 +200,7 @@ func initTbStrategy(db *sql.DB) []error {
 		`
 		INSERT INTO strategy (id, metric, tags, max_step, priority, func, op, right_value, note, run_begin, run_end, tpl_id)
 		VALUES (?, 'cpu.idle', '', 3, 0, 'all(#2)', '<=', 100, '', '', '', ?)
-		`, testID+int('s'), testID+int('t'))
+		`, testIdBase+int('s'), testIdBase+int('t'))
 	return []error{err}
 }
 
@@ -146,7 +211,7 @@ func initTbRelTeamUser(db *sql.DB) []error {
 			`
 			INSERT INTO rel_team_user (id, tid, uid)
 			VALUES (?, ?, ?)
-			`, testID+k, testID, v.Id)
+			`, testIdBase+k, testIdBase, v.Id)
 		errList = append(errList, err)
 	}
 	return errList
@@ -157,7 +222,7 @@ func initTbTeam(db *sql.DB) []error {
 		`
 		INSERT INTO team(id, name, resume, creator, created)
 		VALUES (?, "test_user_group", "", 1, ?)
-		`, testID, timeStamp)
+		`, testIdBase, timeStamp)
 	return []error{err}
 }
 
