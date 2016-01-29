@@ -13,15 +13,17 @@ import (
 var (
 	agentConfig string = "agent.json"
 	judgeConfig string = "judge.json"
-	fnList      []func()
+
+	step   int64
+	fnList []func()
 )
 
 func main() {
 	// Parse cmd-line flags
-	var loop, step int
+	var loop int
 	var mode string
 	flag.IntVar(&loop, "loop", 1, "Loop times.")
-	flag.IntVar(&step, "step", 60, "Time interval in sec.")
+	flag.Int64Var(&step, "step", 60, "Time interval in sec.")
 	flag.StringVar(&mode, "mode", "all", "[all, hbs, transfer].")
 	flag.Parse()
 
@@ -75,7 +77,7 @@ func rpcTransferUpdate() {
 	now := time.Now().Unix()
 	value := now % 100
 	metrics := []*model.MetricValue{}
-	mv := &model.MetricValue{"test-agent", "cpu.idle", value, 60, "GAUGE", "module=transfer-test", now}
+	mv := &model.MetricValue{"fake-agent", "cpu.idle", value, step, "GAUGE", "module=transfer-fake", now}
 	metrics = append(metrics, mv)
 
 	fmt.Printf("[REQ .] <Total=%d> %v\n", len(metrics), metrics[0])
