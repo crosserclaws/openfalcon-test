@@ -160,6 +160,9 @@ func HandleRes(res sql.Result, err error) int64 {
 }
 
 var (
+	gIndex     int
+	createUser string = userList[0].Name
+
 	uids []int64
 	uid  int64
 	tid  int64
@@ -168,8 +171,6 @@ var (
 	aid  int64
 	hid  int64
 	gid  int64
-	ghid int64
-	gtid int64
 	tpid int64
 	sid  int64
 )
@@ -178,21 +179,26 @@ func buildUic() {
 	db := DbConnect("uic")
 	defer db.Close()
 
-	u := userList[0]
-	uid = QueryForId(db, insertUser,
-		"SELECT id FROM user WHERE name=?", u.Name)
+	var u User
+	for gIndex, u = range userList {
+		uid = QueryForId(db, insertUser,
+			"SELECT id FROM user WHERE name=?", u.Name)
+		uids = append(uids, uid)
+	}
 
 	tid = QueryForId(db, insertTeam,
 		"SELECT id from team WHERE name=?",
 		"fake_user_group")
 
-	tuid = QueryForId(db, insertRelTeamUser,
-		"SELECT id from rel_team_user WHERE tid=? AND uid=?",
-		tid, uid)
+	for gIndex, u = range userList {
+		tuid = QueryForId(db, insertRelTeamUser,
+			"SELECT id from rel_team_user WHERE tid=? AND uid=?",
+			tid, uids[gIndex])
+	}
 }
 
 func insertUser(db *sql.DB) int64 {
-	u := userList[0]
+	u := userList[gIndex]
 	return InsertExec(db,
 		`INSERT INTO user(name ,passwd, email, role, creator, created)
 		VALUES (?, ?, ?, 2, 0, "2016-01-01 01:01:01")`, u.Name, u.Passwd, u.Email)
@@ -207,7 +213,7 @@ func insertTeam(db *sql.DB) int64 {
 func insertRelTeamUser(db *sql.DB) int64 {
 	return InsertExec(db,
 		`INSERT INTO rel_team_user (tid, uid)
-		VALUES (?, ?)`, tid, uid)
+		VALUES (?, ?)`, tid, uids[gIndex])
 }
 
 func buildPortal() {
@@ -217,10 +223,10 @@ func buildPortal() {
 	aid = QueryForId(db, insertAction, "SELECT id FROM action WHERE uic=?", "fake_user_group")
 	hid = QueryForId(db, insertHost, "SELECT id FROM  host WHERE hostname=?", testAgent)
 	gid = QueryForId(db, insertGrp, "SELECT id FROM grp WHERE grp_name=?", "fake_host_group")
-	ghid = QueryForId(db, insertGrpHost, "SELECT grp_id FROM grp_host WHERE grp_id=? AND host_id=?", gid, hid)
 	tpid = QueryForId(db, insertTpl, "SELECT id FROM tpl WHERE tpl_name=?", "fake_template")
-	gtid = QueryForId(db, insertGrpTpl, "SELECT grp_id FROM grp_tpl WHERE grp_id=? AND tpl_id=?", gid, tpid)
 	sid = QueryForId(db, insertStrategy, "SELECT id FROM strategy WHERE tpl_id=?", tpid)
+	_ = QueryForId(db, insertGrpHost, "SELECT grp_id FROM grp_host WHERE grp_id=? AND host_id=?", gid, hid)
+	_ = QueryForId(db, insertGrpTpl, "SELECT grp_id FROM grp_tpl WHERE grp_id=? AND tpl_id=?", gid, tpid)
 
 }
 
@@ -238,10 +244,22 @@ func insertHost(db *sql.DB) int64 {
 }
 
 func insertGrp(db *sql.DB) int64 {
-	u := userList[0]
 	return InsertExec(db,
 		`INSERT INTO grp (grp_name, create_user, create_at, come_from)
-		VALUES ("fake_host_group", ?, "2016-01-01 01:01:01", 1)`, u.Name)
+		VALUES ("fake_host_group", ?, "2016-01-01 01:01:01", 1)`, createUser)
+}
+
+func insertTpl(db *sql.DB) int64 {
+	return InsertExec(db,
+		`INSERT INTO tpl (tpl_name, parent_id, action_id, create_user, create_at)
+		VALUES ("fake_template", 0, ?, ?, "2016-01-01 01:01:01")`, aid, createUser)
+}
+
+func insertStrategy(db *sql.DB) int64 {
+	return InsertExec(db,
+		`INSERT INTO strategy (metric, tags, max_step, priority, func, op, right_value, note, run_begin, run_end, tpl_id)
+		VALUES ("cpu.idle", "", 3, 0, "all(#2)", "<=", 100, "", "", "", ?)
+		`, tpid)
 }
 
 func insertGrpHost(db *sql.DB) int64 {
@@ -250,26 +268,11 @@ func insertGrpHost(db *sql.DB) int64 {
 		VALUES (?, ?)`, gid, hid)
 }
 
-func insertTpl(db *sql.DB) int64 {
-	u := userList[0]
-	return InsertExec(db,
-		`INSERT INTO tpl (tpl_name, parent_id, action_id, create_user, create_at)
-		VALUES ("fake_template", 0, ?, ?, "2016-01-01 01:01:01")`, aid, u.Name)
-}
-
 func insertGrpTpl(db *sql.DB) int64 {
-	u := userList[0]
 	return InsertExec(db,
 		`INSERT INTO grp_tpl (grp_id, tpl_id, bind_user)
 		VALUES (?, ?, ?)
-		`, gid, tpid, u.Name)
-}
-
-func insertStrategy(db *sql.DB) int64 {
-	return InsertExec(db,
-		`INSERT INTO strategy (metric, tags, max_step, priority, func, op, right_value, note, run_begin, run_end, tpl_id)
-		VALUES ("cpu.idle", "", 3, 0, "all(#2)", "<=", 100, "", "", "", ?)
-		`, tpid)
+		`, gid, tpid, createUser)
 }
 
 func clean() {
