@@ -17,10 +17,10 @@ const (
 )
 
 var (
-	DbAddr   string = "root:password@tcp(10.20.30.40:3306)/"
+	Debug    bool
+	DbAddr   string
 	DbConfig string = "?charset=utf8&loc=Asia%2FTaipei"
 
-	Debug      bool
 	testIdBase int    = 7777
 	testIdLast int    = testIdBase + int('z')
 	testAgent  string = "test-agent"
@@ -46,14 +46,16 @@ type FnVar func(*sql.DB) []error
 
 func main() {
 	// Parse cmd-line flags
-	var mode string
+	var ip, mode string
 	flag.BoolVar(&Debug, "debug", false, "Debugging or not.")
+	flag.StringVar(&ip, "ip", "10.20.30.40", "MySQL IP address.")
 	flag.StringVar(&mode, "mode", "",
 		"[cab | clean | build]\n\t"+
 			"build  - Build data. (DB must be clean before build if DB is not empty.)\n\t"+
 			"cab    - Clean & Build.\n\t"+
 			"clean  - Clean data.\n\t")
 	flag.Parse()
+	DbAddr = fmt.Sprintf("root:password@tcp(%s:3306)/", ip)
 
 	switch mode {
 	case "cab":
@@ -166,7 +168,6 @@ var (
 	uids []int64
 	uid  int64
 	tid  int64
-	tuid int64
 
 	aid  int64
 	hid  int64
@@ -191,7 +192,7 @@ func buildUic() {
 		"fake_user_group")
 
 	for gIndex, u = range userList {
-		tuid = QueryForId(db, insertRelTeamUser,
+		_ = QueryForId(db, insertRelTeamUser,
 			"SELECT id from rel_team_user WHERE tid=? AND uid=?",
 			tid, uids[gIndex])
 	}
