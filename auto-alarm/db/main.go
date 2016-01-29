@@ -21,11 +21,8 @@ var (
 	DbAddr   string
 	DbConfig string = "?charset=utf8&loc=Asia%2FTaipei"
 
-	testIdBase int    = 7777
-	testIdLast int    = testIdBase + int('z')
-	testAgent  string = "test-agent"
-	timeStamp  string = time.Now().Format("2006-01-02 15:04:05")
-	userList          = []User{
+	testAgent string = "fake-agent"
+	userList         = []User{
 		{"fakeuser1", "070424e5398ec581c27100a0d63fc86e", ""},
 		{"fakeuser2", "070424e5398ec581c27100a0d63fc86e", "cheminlin@cepave.com"},
 	}
@@ -37,13 +34,6 @@ type User struct {
 	Email  string
 }
 
-type DbCase struct {
-	DbName string
-	FnFlow []FnVar
-}
-
-type FnVar func(*sql.DB) []error
-
 func main() {
 	// Parse cmd-line flags
 	var ip, mode string
@@ -52,8 +42,8 @@ func main() {
 	flag.StringVar(&mode, "mode", "",
 		"[cab | clean | build]\n\t"+
 			"build  - Build data. (DB must be clean before build if DB is not empty.)\n\t"+
-			"cab    - Clean & Build.\n\t"+
-			"clean  - Clean data.\n\t")
+			"cab    - Clean & Build. (TBD)\n\t"+
+			"clean  - Clean data. (TBD)\n\t")
 	flag.Parse()
 	DbAddr = fmt.Sprintf("root:password@tcp(%s:3306)/", ip)
 
@@ -73,10 +63,8 @@ func main() {
 }
 
 func build() {
-
 	buildUic()
 	buildPortal()
-
 }
 
 // IoC Callback for id
@@ -275,6 +263,11 @@ func insertGrpTpl(db *sql.DB) int64 {
 		VALUES (?, ?, ?)
 		`, gid, tpid, createUser)
 }
+
+var (
+	testIdBase int = 7777
+	testIdLast int = testIdBase + int('z')
+)
 
 func clean() {
 	cleanDb("uic", "id", "user", "team", "rel_team_user")
