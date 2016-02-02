@@ -1,0 +1,20 @@
+{
+	"endpoint": "fake-agent",
+	"db": {
+		"addr": "root:password@tcp(10.20.30.40:3306)/",
+		"setting": "?charset=utf8&loc=Asia%2FTaipei"
+	},
+	"users": [
+		{
+			"name": "fakeuser1",
+			"passwd": "070424e5398ec581c27100a0d63fc86e",
+			"email": ""
+		},
+		{
+			"name": "fakeuser2",
+			"passwd": "070424e5398ec581c27100a0d63fc86e",
+			"email": "cheminlin@cepave.com"
+		}
+	]
+}
+

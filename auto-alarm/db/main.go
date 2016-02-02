@@ -2,14 +2,34 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"reflect"
 	"runtime"
+	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/toolkits/file"
 )
+
+type DbConfig struct {
+	Addr    string `json:"addr"`
+	Setting string `json:"setting"`
+}
+
+type User struct {
+	Name   string `json:"name"`
+	Passwd string `json:"passwd"`
+	Email  string `json:"email"`
+}
+
+type GlobalConfig struct {
+	Endpoint string    `json:"endpoint"`
+	Db       *DbConfig `json:"db"`
+	Users    []User    `json:"users"`
+}
 
 const (
 	Error int64 = -1
@@ -17,37 +37,24 @@ const (
 )
 
 var (
-	Debug    bool
-	DbAddr   string
-	DbConfig string = "?charset=utf8&loc=Asia%2FTaipei"
-
-	testAgent string = "fake-agent"
-	userList         = []User{
-		{"fakeuser1", "070424e5398ec581c27100a0d63fc86e", ""},
-		{"fakeuser2", "070424e5398ec581c27100a0d63fc86e", "cheminlin@cepave.com"},
-	}
-
-	gIndex int
+	gIndex     int
+	Debug      bool
+	Config     *GlobalConfig
+	configLock = new(sync.RWMutex)
 )
-
-type User struct {
-	Name   string
-	Passwd string
-	Email  string
-}
 
 func main() {
 	// Parse cmd-line flags
-	var ip, mode string
+	var cfg, mode string
 	flag.BoolVar(&Debug, "debug", false, "Debugging msg.")
-	flag.StringVar(&ip, "ip", "10.20.30.40", "MySQL IP address.")
+	flag.StringVar(&cfg, "cfg", "db.json", "Config file.")
 	flag.StringVar(&mode, "mode", "",
 		"[cab | clean | build]\n\t"+
 			"build  - Build data. (DB must be clean before build if DB is not empty.)\n\t"+
 			"cab    - Clean & Build.\n\t"+
 			"clean  - Clean data.\n\t")
 	flag.Parse()
-	DbAddr = fmt.Sprintf("root:password@tcp(%s:3306)/", ip)
+	ParseConfig(cfg)
 
 	switch mode {
 	case "cab":
@@ -166,15 +173,6 @@ func DeleteExec(db *sql.DB, sqlQuery string, args ...interface{}) int64 {
 	return HandleRes(res.RowsAffected, err)
 }
 
-func DbConnect(dbName string) *sql.DB {
-	dbSrc := DbAddr + dbName + DbConfig
-	db, err := sql.Open("mysql", dbSrc)
-	if err != nil {
-		log.Fatalf("[Src=%s] %v\n", dbSrc, err)
-	}
-	return db
-}
-
 func PrintCheckErr(skip int, err error) {
 	if err != nil {
 		PrintErr(skip, err)
@@ -212,6 +210,44 @@ func HandleRes(callback func() (int64, error), err error) int64 {
 	return Error
 }
 
+func DbConnect(dbName string) *sql.DB {
+	dbSrc := Config.Db.Addr + dbName + Config.Db.Setting
+	db, err := sql.Open("mysql", dbSrc)
+	if err != nil {
+		log.Fatalf("[Src=%s] %v\n", dbSrc, err)
+	}
+	return db
+}
+
+// Reference to Open-Falcon's ParseConfig()
+func ParseConfig(cfg string) {
+	if cfg == "" {
+		log.Fatalln("Config file not specified: use -c $filename")
+	}
+
+	if !file.IsExist(cfg) {
+		log.Fatalln("Config file specified not found:", cfg)
+	}
+
+	configContent, err := file.ToTrimString(cfg)
+	if err != nil {
+		log.Fatalln("Read config file", cfg, "error:", err.Error())
+	}
+
+	var c GlobalConfig
+	err = json.Unmarshal([]byte(configContent), &c)
+	if err != nil {
+		log.Fatalln("Parse config file", cfg, "error:", err.Error())
+	}
+
+	// set config
+	configLock.Lock()
+	defer configLock.Unlock()
+	Config = &c
+
+	printDebug(2, "ParseConfig:", cfg, "[DONE.]")
+}
+
 /*
  *
  * Build functions
@@ -219,7 +255,7 @@ func HandleRes(callback func() (int64, error), err error) int64 {
  */
 
 var (
-	createUser string = userList[0].Name
+	createUser string
 
 	uids []int64
 	uid  int64
@@ -235,9 +271,10 @@ var (
 func buildUic() {
 	db := DbConnect("uic")
 	defer db.Close()
+	createUser = Config.Users[0].Name
 
 	var u User
-	for gIndex, u = range userList {
+	for gIndex, u = range Config.Users {
 		uid = InsertSelectId(db, insertUser,
 			"SELECT id FROM user WHERE name=?", u.Name)
 		uids = append(uids, uid)
@@ -247,7 +284,7 @@ func buildUic() {
 		"SELECT id from team WHERE name=?",
 		"fake_user_group")
 
-	for gIndex, u = range userList {
+	for gIndex, u = range Config.Users {
 		_ = InsertSelectId(db, insertRelTeamUser,
 			"SELECT id from rel_team_user WHERE tid=? AND uid=?",
 			tid, uids[gIndex])
@@ -255,7 +292,7 @@ func buildUic() {
 }
 
 func insertUser(db *sql.DB) int64 {
-	u := userList[gIndex]
+	u := Config.Users[gIndex]
 	return InsertExec(db,
 		`INSERT INTO user(name ,passwd, email, role, creator, created)
 		VALUES (?, ?, ?, 2, 0, "2016-01-01 01:01:01")`, u.Name, u.Passwd, u.Email)
@@ -278,7 +315,7 @@ func buildPortal() {
 	defer db.Close()
 
 	aid = InsertSelectId(db, insertAction, "SELECT id FROM action WHERE uic=?", "fake_user_group")
-	hid = InsertSelectId(db, insertHost, "SELECT id FROM host WHERE hostname=?", testAgent)
+	hid = InsertSelectId(db, insertHost, "SELECT id FROM host WHERE hostname=?", Config.Endpoint)
 	gid = InsertSelectId(db, insertGrp, "SELECT id FROM grp WHERE grp_name=?", "fake_host_group")
 	tpid = InsertSelectId(db, insertTpl, "SELECT id FROM tpl WHERE tpl_name=?", "fake_template")
 	sid = InsertSelectId(db, insertStrategy, "SELECT id FROM strategy WHERE tpl_id=?", tpid)
@@ -296,7 +333,7 @@ func insertHost(db *sql.DB) int64 {
 	return InsertExec(db,
 		`INSERT INTO host (hostname, ip, agent_version, plugin_version, maintain_begin, maintain_end, update_at)
 		VALUES (?, '10.20.30.40', '0.0.1', 'plugin not enabled', 0, 0, "2016-01-01 01:01:01")
-		`, testAgent)
+		`, Config.Endpoint)
 }
 
 func insertGrp(db *sql.DB) int64 {
@@ -354,7 +391,7 @@ func cleanUic() {
 	defer db.Close()
 
 	var u User
-	for gIndex, u = range userList {
+	for gIndex, u = range Config.Users {
 		cUid = DeleteSelectId(db, "id",
 			"FROM user WHERE name=?", u.Name)
 		cUids = append(cUids, cUid)
@@ -364,7 +401,7 @@ func cleanUic() {
 		"FROM team WHERE name=?",
 		"fake_user_group")
 
-	for gIndex, u = range userList {
+	for gIndex, u = range Config.Users {
 		_ = DeleteSelectId(db, "",
 			"FROM rel_team_user WHERE tid=? AND uid=?",
 			cTid, cUids[gIndex])
@@ -376,7 +413,7 @@ func cleanPortal() {
 	defer db.Close()
 
 	cAid = DeleteSelectId(db, "id", "FROM action WHERE uic=?", "fake_user_group")
-	cHid = DeleteSelectId(db, "id", "FROM host WHERE hostname=?", testAgent)
+	cHid = DeleteSelectId(db, "id", "FROM host WHERE hostname=?", Config.Endpoint)
 	cGid = DeleteSelectId(db, "id", "FROM grp WHERE grp_name=?", "fake_host_group")
 	cTpid = DeleteSelectId(db, "id", "FROM tpl WHERE tpl_name=?", "fake_template")
 	cSid = DeleteSelectId(db, "id", "FROM strategy WHERE tpl_id=?", cTpid)
