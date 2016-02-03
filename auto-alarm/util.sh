@@ -124,6 +124,8 @@ function ioc() {
     # Check func's return value
     if [[ $? == 1 ]]; then
       eval $callback $i
+    else
+      msg 1 "ERR" "No such container [$i]"
     fi
   done
 }
