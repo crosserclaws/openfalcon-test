@@ -110,13 +110,14 @@ function is_substring() {
 
 # Do callback for each container
 function ioc() {
-  vmsg 1 "MSG" "${FUNCNAME[0]}() the following containers: $@."
+  vmsg 1 "MSG" "${FUNCNAME[1]}() the following containers: [$@]"
   for i in $@; do
     is_substring "$i" "$container_list"
     # Check func's return value
     if [[ $? == 1 ]]; then
       eval $callback $i
     fi
+  done
 }
 
 function status_one() {
@@ -167,7 +168,13 @@ function clean_one() {
 
 function clean() {
   callback=clean_one
-  ioc $@
+  # All container
+  if [[ $1 == "" ]]; then
+    ioc $container_list
+  else
+    # Some containers
+    ioc $@
+  fi
 }
 
 function compose() {
