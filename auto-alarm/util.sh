@@ -38,8 +38,16 @@ function require_option() {
 function usage() {
   echo "[MSG] The script provides some useful utilities in testing env."
   echo "      $0 [sub_command] [options...] [args...]"
-  echo "      -h             Print usage"
-  echo "      -e=native      Env type = {native, docker, kvm}"
+  echo "      -u             [sub_command][-f] docker-compose up, -f for init.yml"
+  echo "      -r             [sub_command][-f] docker-compose rm, -f for init.yml"
+  echo "      -p             [sub_command][-f] docker-compose stop, -f for init.yml"
+  echo "      -s             [sub_command][args...] check control status. (default: all)"
+  echo "      -l             [sub_command][-f][-t NUM][args...] docker logs a contaner. (default: null)"
+  echo "      -c             [sub_command][-f][args...] clean data under /home/openfalcon/ (default: all)"
+  echo "      -f             [option] add -f flag"
+  echo "      -t NUM         [option] add --tail=NUM"
+  echo "      -h             [option] help"
+  echo "      -v             [option] verbose"
   exit 0
 }
 
@@ -163,6 +171,7 @@ function log() {
 
 function clean_one() {
   container=$1
+  msg 0 "MSG" "sudo rm -r $options /home/openfalcon/$container"
   sudo rm -r $options /home/openfalcon/$container
 }
 
