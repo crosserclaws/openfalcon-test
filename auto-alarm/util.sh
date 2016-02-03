@@ -59,9 +59,6 @@ function parse() {
       p)
         sub_command="pause"
         ;;
-      c)
-        sub_command="clean"
-        ;;
       # docker exec
       s)
         sub_command="status"
@@ -69,6 +66,10 @@ function parse() {
       # docker logs
       l)
         sub_command="logs"
+        ;;
+      # clean-up /home/openfalcon/* 
+      c)
+        sub_command="clean"
         ;;
       #
       # [Option]
@@ -102,11 +103,20 @@ function is_substring() {
   sub=$1
   str=${@:2}
   if [[ "$str" == *"$sub"* ]]; then
-    vmsg 0 "MSG" "[$sub] is in [$str]"
     return 1
   fi
-  vmsg 0 "MSG" "[$sub] is not in [$str]"
   return 0
+}
+
+# Do callback for each container
+function ioc() {
+  vmsg 1 "MSG" "${FUNCNAME[0]}() the following containers: $@."
+  for i in $@; do
+    is_substring "$i" "$container_list"
+    # Check func's return value
+    if [[ $? == 1 ]]; then
+      eval $callback $i
+    fi
 }
 
 function status_one() {
@@ -124,31 +134,40 @@ function status_one() {
   fi
 }
 
-function ioc() {
+function status() {
+  callback=status_one
   # All container
-  if [[ $1 == "all" ]]; then
-    # Msgs & shift
-    vmsg 0 "MSG" "Pre- shift $@"
-    shift
-    vmsg 0 "MSG" "Post-shift $@"
-    # :~)
+  if [[ $1 == "" ]]; then
+    ioc $container_list
+  else
+    # Some containers
+    ioc $@
+  fi
+}
 
-    msg 0 "MSG" "${FUNCNAME[0]}() the following containers: ${container_list}."
-    for i in $container_list; do
-      callback $i
-    done
+function log_one() {
+  container=$1
+  docker logs $options $container
+}
+
+function log() {
+  if [[ $# == 0 ]]; then
+    msg 0 "ERR" "Invalid sub_command [$sub_command] and args [$args]"
     return
   fi
+  # Some containers
+  callback=log_one
+  ioc $@
+}
 
-  # A specific container
-  vmsg 0 "MSG" "Params to check [$@]"
-  for i in $@; do
-    is_substring "$i" "$container_list"
-    # Check func's return value
-    if [[ $? == 1 ]]; then
-      callback $i
-    fi
-  done
+function clean_one() {
+  container=$1
+  sudo rm -r $options /home/openfalcon/$container
+}
+
+function clean() {
+  callback=clean_one
+  ioc $@
 }
 
 function compose() {
@@ -183,12 +202,13 @@ function main() {
 
   case $sub_command in
     status)
-      callback=status_one
-      ioc $args
+      status $args
       ;;
     logs)
-      callback=log_one
-      ioc $args
+      log $args
+      ;;
+    clean)
+      clean $args
       ;;
     up)
       compose "up" "-d"
@@ -197,16 +217,6 @@ function main() {
       compose "stop"
       ;;
     remove)
-      compose "rm" "-f"
-      ;;
-    clean)
-      # OWL
-      options=""
-      compose "stop"
-      compose "rm" "-f"
-      # -f init.yml
-      options="-f "
-      compose "stop"
       compose "rm" "-f"
       ;;
     *)
