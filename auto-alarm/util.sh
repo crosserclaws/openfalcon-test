@@ -5,6 +5,7 @@ OPTIND=1         # Reset in case getopts has been used previously in the shell.
 
 # Initialize variables
 container_list="agent aggregator alarm dashboard fe graph hbs judge links nodata portal query sender task transfer"
+callback=""
 sub_command=""
 options=""
 args=""
@@ -97,7 +98,7 @@ function parse() {
   done
 }
 
-function check_substring() {
+function is_substring() {
   sub=$1
   str=${@:2}
   if [[ "$str" == *"$sub"* ]]; then
@@ -123,8 +124,8 @@ function status_one() {
   fi
 }
 
-function status() {
-  # All container's status
+function ioc() {
+  # All container
   if [[ $1 == "all" ]]; then
     # Msgs & shift
     vmsg 0 "MSG" "Pre- shift $@"
@@ -132,22 +133,36 @@ function status() {
     vmsg 0 "MSG" "Post-shift $@"
     # :~)
 
-    msg 0 "MSG" "Checking the following containers: ${container_list}."
+    msg 0 "MSG" "${FUNCNAME[0]}() the following containers: ${container_list}."
     for i in $container_list; do
-      status_one $i
+      callback $i
     done
     return
   fi
 
-  # A specific container's status
+  # A specific container
   vmsg 0 "MSG" "Params to check [$@]"
   for i in $@; do
-    check_substring "$i" "$container_list"
+    is_substring "$i" "$container_list"
     # Check func's return value
     if [[ $? == 1 ]]; then
-      status_one $i
+      callback $i
     fi
   done
+}
+
+function compose() {
+  cmd=$1
+  opt=${@:2}
+  # Default
+  if [[ $options == "" ]]; then
+    docker-compose $cmd $opt
+  # -f init.yml
+  elif [[ $options == "-f " ]]; then
+    docker-compose -f init.yml $cmd $opt
+  else
+    msg 0 "ERR" "[$sub_command]: args [$args]"
+  fi
 }
 
 #
@@ -168,21 +183,31 @@ function main() {
 
   case $sub_command in
     status)
-      status $args
+      callback=status_one
+      ioc $args
       ;;
     logs)
-      docker logs $options $args
+      callback=log_one
+      ioc $args
       ;;
     up)
-      # Default
-      if [[ $options == "" ]]; then
-        docker-compose up
+      compose "up" "-d"
+      ;;
+    pause)
+      compose "stop"
+      ;;
+    remove)
+      compose "rm" "-f"
+      ;;
+    clean)
+      # OWL
+      options=""
+      compose "stop"
+      compose "rm" "-f"
       # -f init.yml
-      elif [[ $options == "-f " ]]; then
-        docker-compose -f init.yml up
-      else
-        msg 0 "ERR" "[$sub_command]: args [$args]"
-      fi
+      options="-f "
+      compose "stop"
+      compose "rm" "-f"
       ;;
     *)
       msg 0 "ERR" "Invalid sub_command [$sub_command] and args [$args]"
