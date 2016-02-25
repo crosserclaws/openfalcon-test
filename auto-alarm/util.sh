@@ -39,8 +39,8 @@ function usage() {
   echo "[MSG] The script provides some useful utilities in testing env."
   echo "      $0 [sub_command] [options...] [args...]"
   echo "[CMD] Docker"
-  echo "      -R             [-f] docker-compose rm, -f for init.yml"
-  echo "      -S             [-f] docker-compose stop, -f for init.yml"
+  echo "      -R             [-f][all] docker-compose rm, -f for init.yml; all for both yml files."
+  echo "      -S             [-f][all] docker-compose stop, -f for init.yml; all for both yml files."
   echo "      -l             [-f][-t NUM][args...] docker logs a contaner. (default: null)"
   echo "      Control"
   echo "      -c             [args...] control status check. (default: all)"
@@ -194,9 +194,10 @@ function clean_one() {
 
 function clean() {
   callback=clean_one
-  # All container
+  # All
   if [[ $1 == "" ]]; then
-    ioc $container_list
+    msg 0 "MSG" "sudo rm -r $options /home/openfalcon/*"
+    sudo rm -r $options /home/openfalcon/*
   else
     # Some containers
     ioc $@
@@ -204,7 +205,7 @@ function clean() {
 }
 
 function compose_one() {
-  cmd=$1
+  cmd=$@
   # Default
   if [[ $options == "" ]]; then
     docker-compose $cmd
@@ -217,10 +218,11 @@ function compose_one() {
 }
 
 function compose() {
-  cmd=$1
-  opt=$2
+  opt=$1
+  cmd=${@:2}
 
   if [[ $opt == "all" ]]; then
+    options=""
     compose_one $cmd
     options="-f "
     compose_one $cmd
@@ -265,10 +267,10 @@ function main() {
       clean $args
       ;;
     stop)
-      compose "stop" $args
+      compose $1 "stop"
       ;;
     remove)
-      compose "rm -f" $args
+      compose $1 "rm -f"
       ;;
     *)
       msg 0 "ERR" "Invalid sub_command [$sub_command] and args [$args]"
