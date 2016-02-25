@@ -38,45 +38,51 @@ function require_option() {
 function usage() {
   echo "[MSG] The script provides some useful utilities in testing env."
   echo "      $0 [sub_command] [options...] [args...]"
-  echo "      -u             [sub_command][-f] docker-compose up, -f for init.yml"
-  echo "      -r             [sub_command][-f] docker-compose rm, -f for init.yml"
-  echo "      -p             [sub_command][-f] docker-compose stop, -f for init.yml"
-  echo "      -s             [sub_command][args...] check control status. (default: all)"
-  echo "      -l             [sub_command][-f][-t NUM][args...] docker logs a contaner. (default: null)"
-  echo "      -c             [sub_command][-f][args...] clean data under /home/openfalcon/ (default: all)"
+  echo "[CMD] Docker"
+  echo "      -R             [-f] docker-compose rm, -f for init.yml"
+  echo "      -S             [-f] docker-compose stop, -f for init.yml"
+  echo "      -l             [-f][-t NUM][args...] docker logs a contaner. (default: null)"
+  echo "      Control"
+  echo "      -c             [args...] control status check. (default: all)"
+  echo "      -s             [args...] control start. (default: null)"
+  echo "      -r             [args...] control restart. (default: null)"
+  echo "      -C             [-f][args...] clean data under /home/openfalcon/ (default: all)"
+  echo "[OPT] Flag"
   echo "      -f             [option] add -f flag"
   echo "      -t NUM         [option] add --tail=NUM"
   echo "      -h             [option] help"
   echo "      -v             [option] verbose"
+  echo "[ARG] Name of containers"
   exit 0
 }
 
 function parse() {
-  while getopts ":slurpcft:hv" opt; do
+  while getopts ":RSlcsrCft:hv" opt; do
     case $opt in
       #
       # [Sub_command]
       #
-      # docker-compose
-      u)
-        sub_command="up"
-        ;;
-      r)
+      # Docker
+      R)
         sub_command="remove"
         ;;
-      p)
-        sub_command="pause"
+      S)
+        sub_command="stop"
         ;;
-      # docker exec
-      s)
-        sub_command="status"
-        ;;
-      # docker logs
       l)
         sub_command="logs"
         ;;
-      # clean-up /home/openfalcon/* 
+      # Control
       c)
+        sub_command="check"
+        ;;
+      s)
+        sub_command="start"
+        ;;
+      r)
+        sub_command="restart"
+        ;;
+      C)
         sub_command="clean"
         ;;
       #
@@ -130,7 +136,7 @@ function ioc() {
   done
 }
 
-function status_one() {
+function check_one() {
   container=$1
   output=$(docker exec $container /home/$container/control status)
 
@@ -145,8 +151,8 @@ function status_one() {
   fi
 }
 
-function status() {
-  callback=status_one
+function check() {
+  callback=check_one
   # All container
   if [[ $1 == "" ]]; then
     ioc $container_list
@@ -156,19 +162,28 @@ function status() {
   fi
 }
 
-function log_one() {
-  container=$1
-  docker logs $options $container
-}
-
-function log() {
+function control() {
   if [[ $# == 0 ]]; then
     msg 0 "ERR" "Invalid sub_command [$sub_command] and args [$args]"
     return
   fi
   # Some containers
-  callback=log_one
   ioc $@
+}
+
+function start_one() {
+  container=$1
+  docker exec $container /home/$container/control start
+}
+
+function restart_one() {
+  container=$1
+  docker exec $container /home/$container/control restart
+}
+
+function log_one() {
+  container=$1
+  docker logs $options $container
 }
 
 function clean_one() {
@@ -188,17 +203,29 @@ function clean() {
   fi
 }
 
-function compose() {
+function compose_one() {
   cmd=$1
-  opt=${@:2}
   # Default
   if [[ $options == "" ]]; then
-    docker-compose $cmd $opt
+    docker-compose $cmd
   # -f init.yml
   elif [[ $options == "-f " ]]; then
-    docker-compose -f init.yml $cmd $opt
+    docker-compose -f init.yml $cmd
   else
     msg 0 "ERR" "[$sub_command]: args [$args]"
+  fi
+}
+
+function compose() {
+  cmd=$1
+  opt=$2
+
+  if [[ $opt == "all" ]]; then
+    compose_one $cmd
+    options="-f "
+    compose_one $cmd
+  else
+    compose_one $cmd
   fi
 }
 
@@ -219,23 +246,29 @@ function main() {
   vmsg 0 "MSG" "${!args@}: [$args]"
 
   case $sub_command in
-    status)
-      status $args
+    check)
+      check $args
+      ;;
+    start)
+      callback=start_one
+      control $args
+      ;;
+    restart)
+      callback=restart_one
+      control $args
       ;;
     logs)
-      log $args
+      callback=log_one
+      control $args
       ;;
     clean)
       clean $args
       ;;
-    up)
-      compose "up" "-d"
-      ;;
-    pause)
-      compose "stop"
+    stop)
+      compose "stop" $args
       ;;
     remove)
-      compose "rm" "-f"
+      compose "rm -f" $args
       ;;
     *)
       msg 0 "ERR" "Invalid sub_command [$sub_command] and args [$args]"

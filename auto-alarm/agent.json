@@ -16,7 +16,7 @@
     },
     "transfer": {
         "enabled": true,
-        "addr": "0.0.0.0:8433",
+        "addr": "10.20.30.40:8433",
         "interval": 60,
         "timeout": 1000
     },
