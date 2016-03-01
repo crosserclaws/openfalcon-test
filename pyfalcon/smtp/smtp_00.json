@@ -1,0 +1,18 @@
+[
+        {
+            "data": {
+                "tos": "cheminlin@cepave.com,,",
+                "subject": "fake-subject_00",
+                "content": "fake-content_00."
+            },
+            "expect": "Success."
+        },
+        {
+            "data": {
+                "tos": ",cheminlin@cepave.com,",
+                "subject": "fake-subject_01",
+                "content": "fake-content_01."
+            },
+            "expect": "Success."
+        }
+ ]
