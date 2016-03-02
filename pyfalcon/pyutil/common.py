@@ -4,11 +4,11 @@ import json
 import logging
 import argparse
 
-logFormat = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s' 
+logFormat = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
 logLevel = logging.DEBUG
 gCfgName = 'config.json'
-    
-def newCommonLogger(loggerName=None):
+
+def newLogger(loggerName=None):
     logger = logging.getLogger(loggerName)
     handler = logging.StreamHandler()
     handler.setLevel(logLevel)
@@ -17,7 +17,7 @@ def newCommonLogger(loggerName=None):
     logger.addHandler(handler)
     return logger
 
-def setCommonParser(parser):
+def setParser(parser):
     parser.add_argument(
         '-d', '--debug',
         help="Print debugging msgs.",
@@ -29,8 +29,8 @@ def setCommonParser(parser):
         help="Be verbose.",
         action="store_const", dest="loglevel", const=logging.INFO,
     )
-    
-def loadCommonJson(logger, fileName):
+
+def loadJson(logger, fileName):
     logger.info("[FILE.] %s", fileName)
     with open(fileName) as data_file:
         json_obj = json.load(data_file)

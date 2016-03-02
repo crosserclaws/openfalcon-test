@@ -4,21 +4,21 @@ import sys
 import argparse
 import http.client
 import urllib.parse
-import smtp_util as sutil
+from pyutil import common
 
 __suiteName = 'smtp_00'
 
 def init(loggerName, cfgFileName, suiteFileName):
     # Args
     parser = argparse.ArgumentParser()
-    sutil.setCommonParser(parser)
+    common.setParser(parser)
     args = parser.parse_args()
     # Logger
-    logger = sutil.newCommonLogger()
+    logger = common.newLogger()
     logger.setLevel(args.loglevel)
     # Files
-    cfg = sutil.loadCommonJson(logger, cfgFileName)
-    suite = sutil.loadCommonJson(logger, suiteFileName)
+    cfg = common.loadJson(logger, cfgFileName)
+    suite = common.loadJson(logger, suiteFileName)
     
     return logger, cfg, suite
 
@@ -48,7 +48,7 @@ def testSendMail(logger, cfg, param, expect):
         return False
 
 def main():
-    logger, cfg, suite = init(__suiteName, sutil.gCfgName, __suiteName + '.json')
+    logger, cfg, suite = init(__suiteName, common.gCfgName, __suiteName + '.json')
     allPass = True
 
     # Test
