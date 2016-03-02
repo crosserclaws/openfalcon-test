@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 
+import sys
+import argparse
 import http.client
 import urllib.parse
 import smtp_util as sutil
 
 __suiteName = 'smtp_00'
+
+def init(loggerName, cfgFileName, suiteFileName):
+    # Args
+    parser = argparse.ArgumentParser()
+    sutil.setCommonParser(parser)
+    args = parser.parse_args()
+    # Logger
+    logger = sutil.newCommonLogger()
+    logger.setLevel(args.loglevel)
+    # Files
+    cfg = sutil.loadCommonJson(logger, cfgFileName)
+    suite = sutil.loadCommonJson(logger, suiteFileName)
+    
+    return logger, cfg, suite
 
 def testSendMail(logger, cfg, param, expect):
     # Arrange
@@ -31,26 +47,25 @@ def testSendMail(logger, cfg, param, expect):
         logger.debug("[DATA.] %s != %s", data, expectData)
         return False
 
-#
-# Program
-#
+def main():
+    logger, cfg, suite = init(__suiteName, sutil.gCfgName, __suiteName + '.json')
+    allPass = True
 
-cfg, suite = sutil.init(__suiteName, sutil.gCfgName, __suiteName + '.json')
-logger = sutil.getLogger()
-allPass = True
+    # Test
+    for idx, tCase in enumerate(suite):
+        logger.info("Case #%02d testing...", idx)
+        onePass = testSendMail(logger, cfg, tCase['data'], tCase['expect'])
+        if onePass:
+            logger.info("Case #%02d PASS.", idx)
+        else:
+            allPass = False
+            logger.info("Case #%02d FAIL.", idx)
 
-# Test
-for idx, tCase in enumerate(suite):
-    logger.info("Case #%02d testing...", idx)
-    onePass = testSendMail(logger, cfg, tCase['data'], tCase['expect'])
-    if onePass:
-        logger.info("Case #%02d PASS.", idx)
+    # Report
+    if allPass:
+        print("PASS.")
     else:
-        allPass = False
-        logger.info("Case #%02d FAIL.", idx)
+        print("FAIL.")
 
-# Report
-if allPass:
-    print("PASS.")
-else:
-    print("FAIL.")
+if __name__ == "__main__":
+    sys.exit(int(main() or 0))
