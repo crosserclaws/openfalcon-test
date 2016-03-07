@@ -3,8 +3,8 @@
 from pyutil import common
 from pyutil import rpcclient as rc
 
-_suiteName = 'hbs_00'
-_suiteDesc = 'RPC of Hbs.GetStrategies. (Act like a fake-judge.)'
+_SUITE_NAME = 'hbs_00'
+_SUITE_DESC = 'RPC of Hbs.GetStrategies. (Act like a fake-judge.)'
 
 def testRpcHbsGetStrategies(logger, tCase, cfg):
     # Arrange & Act
@@ -22,8 +22,8 @@ def testRpcHbsGetStrategies(logger, tCase, cfg):
     return False
 
 def main():
-    logger, cfg, suite, _ = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
-    common.runTestSuite(_suiteName, testRpcHbsGetStrategies, logger, suite, cfg)
+    logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
+    common.runTestSuite(_SUITE_NAME, testRpcHbsGetStrategies, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys

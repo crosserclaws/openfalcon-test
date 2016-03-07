@@ -6,7 +6,7 @@ import argparse
 
 logFormat = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
 logLevel = logging.DEBUG
-gCfgName = 'config.json'
+CFG_NAME = 'config.json'
 
 def init(loggerName, cfgFileName, suiteFileName, parserCallback=None):
     # Args

@@ -5,8 +5,8 @@ import http.client
 import urllib.parse
 from pyutil import common
 
-_suiteName = 'smtp_00'
-_suiteDesc = 'SMTP API: /mail.'
+_SUITE_NAME = 'smtp_00'
+_SUITE_DESC = 'SMTP API: /mail.'
 
 def testApiSmtpMail(logger, tCase, cfg):
     # Arrange & Act
@@ -24,8 +24,8 @@ def testApiSmtpMail(logger, tCase, cfg):
         return False
 
 def main():
-    logger, cfg, suite, _ = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
-    common.runTestSuite(_suiteName, testApiSmtpMail, logger, suite, cfg)
+    logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
+    common.runTestSuite(_SUITE_NAME, testApiSmtpMail, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys
