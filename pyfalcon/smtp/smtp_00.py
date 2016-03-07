@@ -24,7 +24,7 @@ def testApiSmtpMail(logger, tCase, cfg):
         return False
 
 def main():
-    logger, cfg, suite = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
+    logger, cfg, suite, _ = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
     common.runTestSuite(_suiteName, testApiSmtpMail, logger, suite, cfg)
 
 if __name__ == "__main__":

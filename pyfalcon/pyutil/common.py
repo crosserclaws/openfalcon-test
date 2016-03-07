@@ -22,7 +22,7 @@ def init(loggerName, cfgFileName, suiteFileName, parserCallback=None):
     cfg = loadJson(logger, cfgFileName)
     suite = loadJson(logger, suiteFileName)
     
-    return logger, cfg, suite
+    return logger, cfg, suite, args
 
 def runTestSuite(suiteName, callback, logger, suite, *args):
     allPass = True
