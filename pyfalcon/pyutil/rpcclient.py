@@ -38,6 +38,9 @@ class RpcClient():
 
         # This must loop if resp is bigger than buffer size
         resp = self._socket.recv(self._bufSize)
+        if not resp:
+            self._logger.debug("[RES<-] ''(Empty_Response)")
+            return None
         resp = json.loads(resp.decode())
 
         if resp.get('id') != req.get('id'):
