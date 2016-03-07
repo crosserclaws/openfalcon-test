@@ -4,6 +4,7 @@ from pyutil import common
 from pyutil import rpcclient as rc
 
 _suiteName = 'transfer_00'
+_suiteDesc = 'RPC of Transfer.Update. (Act like a fake-agent.)'
 
 def testTransferRpc(logger, tCase, rpc):
     # Arrange & Act

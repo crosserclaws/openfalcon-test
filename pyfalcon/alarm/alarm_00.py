@@ -6,7 +6,8 @@ import argparse
 import requests
 from pyutil import common
 
-__suiteName = 'alarm_00'
+_suiteName = 'alarm_00'
+_suiteDesc = 'The API of ALARM/event.'
 
 def init(loggerName, cfgFileName, suiteFileName):
     # Args
@@ -47,14 +48,14 @@ def testGetEvent(logger, cfg, param, expect):
     return False
 
 def main():
-    logger, cfg, suite = init(__suiteName, common.gCfgName, __suiteName + '.json')
+    logger, cfg, suite = init(_suiteName, common.gCfgName, _suiteName + '.json')
     allPass = True
 
     # Test
     for idx, tCase in enumerate(suite):
-        logger.info("[%s][#%02d] testing...", __suiteName ,idx)
+        logger.info("[%s][#%02d] testing...", _suiteName ,idx)
         onePass = testGetEvent(logger, cfg, tCase['data'], tCase['expect'])
-        oneMsg = "[{:s}][#{:02d}] ".format(__suiteName, idx)
+        oneMsg = "[{:s}][#{:02d}] ".format(_suiteName, idx)
         # Case report
         if onePass:
             oneMsg += "PASS."
@@ -65,7 +66,7 @@ def main():
             
 
     # Suite report
-    allMsg = "[{:s}][ALL] ".format(__suiteName)
+    allMsg = "[{:s}][ALL] ".format(_suiteName)
     if allPass:
         allMsg += "PASS."
     else:
