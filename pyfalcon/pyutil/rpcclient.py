@@ -9,6 +9,7 @@ class RpcClient():
     _bufSize = 4096
 
     def __init__(self, addr, logger=None):
+        self._createSuccess = True
         self._id_iter = itertools.count()
         # Socket
         try:
