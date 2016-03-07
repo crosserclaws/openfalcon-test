@@ -27,8 +27,14 @@ def init(loggerName, cfgFileName, suiteFileName, parserCallback=None):
 def runTestSuite(suiteName, callback, logger, suite, *args):
     allPass = True
     for idx, tCase in enumerate(suite):
+        onePass = None
         logger.info("[%s][#%02d] testing...", suiteName ,idx)
-        onePass = callback(logger, tCase, *args)
+        try:
+            onePass = callback(logger, tCase, *args)
+        except Exception as e:
+            onePass = False
+            logger.debug(e)
+        
         oneMsg = "[{:s}][#{:02d}] ".format(suiteName, idx)
         # Case report
         if onePass:

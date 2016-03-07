@@ -9,15 +9,22 @@ class RpcClient():
     _bufSize = 4096
 
     def __init__(self, addr, logger=None):
-        self._socket = socket.create_connection(addr)
         self._id_iter = itertools.count()
+        # Socket
+        try:
+            self._socket = socket.create_connection(addr)
+        except Exception as e:
+            self._createSuccess = False
+            raise Exception("%s (@ RpcClient.init())" % e)
+        # Logger
         if logger is None:
             self._logger = common.newLogger("RpcClient")
         else:
             self._logger = logger
 
     def __del__(self):
-        self._socket.close()
+        if self._createSuccess:
+            self._socket.close()
 
     def call(self, name, *params):
         req = dict(id=next(self._id_iter),
