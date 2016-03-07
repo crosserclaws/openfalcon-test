@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
 from pyutil import common
 from pyutil import rpcclient as rc
 

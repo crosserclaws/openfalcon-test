@@ -1,71 +1,31 @@
 #!/usr/bin/env python3
 
-import sys
-import argparse
+import requests
 import http.client
 import urllib.parse
 from pyutil import common
 
-__suiteName = 'smtp_00'
+_suiteName = 'smtp_00'
 
-def init(loggerName, cfgFileName, suiteFileName):
-    # Args
-    parser = argparse.ArgumentParser()
-    common.setParser(parser)
-    args = parser.parse_args()
-    # Logger
-    logger = common.newLogger()
-    logger.setLevel(args.loglevel)
-    # Files
-    cfg = common.loadJson(logger, cfgFileName)
-    suite = common.loadJson(logger, suiteFileName)
-    
-    return logger, cfg, suite
-
-def testSendMail(logger, cfg, param, expect):
-    # Arrange
-    body = urllib.parse.urlencode(param).encode('utf-8')
-    headers = { "Content-type": "application/x-www-form-urlencoded",
-                "Accept": "text/plain" }
-    logger.debug("[REQ->][BODY] %s", body)
-    
-    # Act
-    conn = http.client.HTTPConnection(cfg['host'], cfg['port'])
-    conn.request("POST", cfg['url'], body, headers)
-    response = conn.getresponse()
-    
-    logger.debug("[RESP.] %s %s", response.status, response.reason)
-    data = response.read()
-    conn.close()
+def testSendMail(logger, tCase, cfg):
+    # Arrange & Act
+    param = tCase['data']
+    url = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api'])
+    r = requests.post(url, data=param)
     
     # Assert
-    expectData = str.encode(expect)
-    if data == expectData:
-        logger.debug("[DATA.] %s == %s", data, expectData)
+    real = r.text
+    expect = tCase['expect']
+    logger.debug("[DATA.] %s ?= %s", expect, real)
+    if real == expect:
         return True
     else:
-        logger.debug("[DATA.] %s != %s", data, expectData)
         return False
 
 def main():
-    logger, cfg, suite = init(__suiteName, common.gCfgName, __suiteName + '.json')
-    allPass = True
-
-    # Test
-    for idx, tCase in enumerate(suite):
-        logger.info("Case #%02d testing...", idx)
-        onePass = testSendMail(logger, cfg, tCase['data'], tCase['expect'])
-        if onePass:
-            logger.info("Case #%02d PASS.", idx)
-        else:
-            allPass = False
-            logger.info("Case #%02d FAIL.", idx)
-
-    # Report
-    if allPass:
-        print("PASS.")
-    else:
-        print("FAIL.")
+    logger, cfg, suite = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
+    common.runTestSuite(_suiteName, testSendMail, logger, suite, cfg)
 
 if __name__ == "__main__":
+    import sys
     sys.exit(int(main() or 0))
