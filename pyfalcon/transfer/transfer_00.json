@@ -1,0 +1,57 @@
+[
+    {
+        "number": "00",
+        "data": {
+            "payload": [
+                {
+                    "endpoint": "fake.transfer.00",
+                    "metric": "fake.metric.00",
+                    "value": 0,
+                    "step": 60,
+                    "counterType": "GAUGE",
+                    "tags": "tag=t00",
+                    "timestamp": 1234567890
+                }
+            ]
+        },
+        "expect": {
+            "payload": {
+                "Invalid": 0,
+                "Total": 1,
+                "Message": "ok"
+            }
+        }
+    },
+    {
+        "number": "01",
+        "data": {
+            "payload": [
+                {
+                    "endpoint": "fake.transfer.0",
+                    "metric": "fake.metric.0",
+                    "value": 0,
+                    "step": 60,
+                    "counterType": "GAUGE",
+                    "tags": "tag=t0",
+                    "timestamp": 1234567890
+                },
+                {
+                    "endpoint": "fake.transfer.1",
+                    "metric": "fake.metric.1",
+                    "value": 1,
+                    "step": 60,
+                    "counterType": "COUNTER",
+                    "tags": "tag=t1",
+                    "timestamp": 1234567891
+                }
+            ]
+        },
+        "expect": {
+            "payload": {
+                "Invalid": 0,
+                "Total": 2,
+                "Message": "ok"
+            }
+        }
+    }
+]
