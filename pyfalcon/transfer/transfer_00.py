@@ -6,10 +6,11 @@ from pyutil import rpcclient as rc
 _suiteName = 'transfer_00'
 _suiteDesc = 'RPC of Transfer.Update. (Act like a fake-agent.)'
 
-def testTransferRpc(logger, tCase, rpc):
+def testRpcTransferUpdate(logger, tCase, cfg):
     # Arrange & Act
     mv = tCase['data']['payload']
     expect = tCase['expect']['payload']
+    rpc = rc.RpcClient((cfg['host'], cfg['rpc']), logger)
     real = rpc.call("Transfer.Update", mv)
     
     # Assert
@@ -22,9 +23,7 @@ def testTransferRpc(logger, tCase, rpc):
 
 def main():
     logger, cfg, suite = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
-    rpc = rc.RpcClient((cfg['host'], cfg['rpc']), logger)
-
-    common.runTestSuite(_suiteName, testTransferRpc, logger, suite, rpc)
+    common.runTestSuite(_suiteName, testRpcTransferUpdate, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys

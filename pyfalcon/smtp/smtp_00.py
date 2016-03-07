@@ -8,7 +8,7 @@ from pyutil import common
 _suiteName = 'smtp_00'
 _suiteDesc = 'SMTP API: /mail.'
 
-def testSendMail(logger, tCase, cfg):
+def testApiSmtpMail(logger, tCase, cfg):
     # Arrange & Act
     param = tCase['data']
     url = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api'])
@@ -25,7 +25,7 @@ def testSendMail(logger, tCase, cfg):
 
 def main():
     logger, cfg, suite = common.init(_suiteName, common.gCfgName, _suiteName + '.json')
-    common.runTestSuite(_suiteName, testSendMail, logger, suite, cfg)
+    common.runTestSuite(_suiteName, testApiSmtpMail, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys
