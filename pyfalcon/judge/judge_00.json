@@ -1,0 +1,40 @@
+[
+    {
+        "number": "00",
+        "data": [
+            {
+                "endpoint": "fake.judge.00",
+                "metric": "fake.metric.00",
+                "value": 0,
+                "judgeType": "GAUGE",
+                "tags": "tag=t00",
+                "timestamp": 1234567890
+            }
+        ],
+        "expect": {
+        }
+    },
+    {
+        "number": "01",
+        "data": [
+            {
+                "endpoint": "fake.judge.0",
+                "metric": "fake.metric.0",
+                "value": 0,
+                "judgeType": "GAUGE",
+                "tags": "tag=t0",
+                "timestamp": 1234567890
+            },
+            {
+                "endpoint": "fake.judge.1",
+                "metric": "fake.metric.1",
+                "value": 1,
+                "judgeType": "COUNTER",
+                "tags": "tag=t1",
+                "timestamp": 1234567891
+            }
+        ],
+        "expect": {
+        }
+    }
+]
