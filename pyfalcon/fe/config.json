@@ -1,0 +1,16 @@
+{
+    "host": "10.20.30.40",
+    "http": 1234,
+    "api": {
+        "rootCreate": "/root",
+        "teamCreate": "/me/team/c",
+        "userCreate": "/me/user/c"
+    },
+    "login": {
+        "url": "http://10.20.30.40:1234/auth/login",
+        "auth": {
+            "name": "root",
+            "password": "root"
+        }
+    }
+}

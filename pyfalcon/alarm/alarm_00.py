@@ -4,7 +4,7 @@ import requests
 from pyutil import common
 
 _SUITE_NAME = 'alarm_00'
-_SUITE_DESC = 'The API of ALARM/event.'
+_SUITE_DESC = 'API: ALARM/event.'
 
 def _checkLogin(logger, cfg):
     if cfg['debug']: return None
@@ -34,7 +34,7 @@ def testGetEvent(logger, tCase, cfg):
         logger.debug("[DATA.] %s ?= %s", expect, real)
         if expect == real:
             return True
-    # logger.debug("[DATA.] All data != %s", expect)
+    
     return False
 
 def main():

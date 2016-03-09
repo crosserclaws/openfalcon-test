@@ -6,7 +6,7 @@ import urllib.parse
 from pyutil import common
 
 _SUITE_NAME = 'smtp_00'
-_SUITE_DESC = 'SMTP API: /mail.'
+_SUITE_DESC = 'API: SMTP/mail.'
 
 def testApiSmtpMail(logger, tCase, cfg):
     # Arrange & Act
