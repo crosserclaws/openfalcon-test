@@ -3,6 +3,7 @@
 import json
 import logging
 import argparse
+import requests
 
 logFormat = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
 logLevel = logging.DEBUG
@@ -29,11 +30,14 @@ def runTestSuite(suiteName, callback, logger, suite, *args):
     for idx, tCase in enumerate(suite):
         onePass = None
         logger.info("[%s][#%02d] testing...", suiteName ,idx)
-        try:
+        if logger.getEffectiveLevel() <= logging.INFO:
             onePass = callback(logger, tCase, *args)
-        except Exception as e:
-            onePass = False
-            logger.debug(e)
+        else:
+            try:
+                onePass = callback(logger, tCase, *args)
+            except Exception as e:
+                onePass = False
+                logger.debug(e)
         
         oneMsg = "[{:s}][#{:02d}] ".format(suiteName, idx)
         # Case report
@@ -65,8 +69,22 @@ def loadJson(logger, fileName):
     logger.info("[FILE.] %s", fileName)
     with open(fileName) as data_file:
         json_obj = json.load(data_file)
-        logger.debug("[JSON.] %s", json_obj)
+        logger.info("[JSON.] %s", json_obj)
         return json_obj
+
+def login(logger, url, param):
+    r = requests.post(url, data=param)
+    checkBadCode(logger, r)
+
+    sig = r.cookies['sig']
+    logger.debug("[SIG.] %s", sig)
+    return sig
+
+def checkBadCode(logger, resp):
+    if resp.status_code == 200:
+        logger.info("[HTTP.] %d", resp.status_code)
+        return
+    raise Exception("[HTTP.] %s %s" % (resp.status_code, resp.text))
 
 def _setParser(parser):
     parser.add_argument(

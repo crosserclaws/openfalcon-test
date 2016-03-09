@@ -5,6 +5,8 @@
             "password": "root"
         },
         "expect": {
+            "name": "root",
+            "password": "root"
         }
     }
  ]

@@ -12,10 +12,10 @@ def testRootCreate(logger, tCase, cfg):
     testParam = tCase['data']
     # Act
     r = requests.get(testUrl, params=testParam)
-    logger.debug(r)
-    logger.debug(r.text)
+    common.checkBadCode(logger, r)
     
     # Assert
+    _ = common.login(logger, cfg['login']['url'], tCase['expect'])
     return True
 
 def main():
