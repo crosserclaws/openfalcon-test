@@ -41,8 +41,10 @@ class RpcClient():
         if not resp:
             self._logger.debug("[RES<-] ''(Empty_Response)")
             return None
+        
         resp = json.loads(resp.decode())
-
+        self._logger.debug("[RES<-]\n%s", resp)
+        # Check before return the result
         if resp.get('id') != req.get('id'):
             raise Exception("expected id=%s, received id=%s: %s"
                             %(id, resp.get('id'), resp.get('error')))
@@ -50,9 +52,7 @@ class RpcClient():
         if resp.get('error') is not None:
             raise Exception(resp.get('error'))
         
-        res = resp.get('result')
-        self._logger.debug("[RES<-]\n%s", res)
-        return res
+        return resp.get('result')
 
 def main():
     import time

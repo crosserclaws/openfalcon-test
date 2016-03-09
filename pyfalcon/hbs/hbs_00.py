@@ -13,7 +13,6 @@ def testRpcHbsGetStrategies(logger, tCase, cfg):
     rpc = rc.RpcClient((cfg['host'], cfg['rpc']), logger)
     real = rpc.call("Hbs.GetStrategies", arg)
     if not expect:
-        logger.debug(real)
         return True
 
     # Todo
