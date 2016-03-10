@@ -4,23 +4,38 @@ import requests
 from pyutil import common
 
 _SUITE_NAME = 'fe_00'
-_SUITE_DESC = 'API: FE/root.'
+_SUITE_DESC = 'API: authLogin.'
 
-def testRootCreate(logger, tCase, cfg):
-    # Arrange
-    testUrl = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api']['rootCreate'])
-    testParam = tCase['data']
-    # Act
-    r = requests.get(testUrl, params=testParam)
+def authLogin(logger, url, payload):
+    r = requests.post(url, data=payload)
     common.checkBadCode(logger, r)
+
+    sig = r.cookies['sig']
+    logger.debug("[SIG.] %s", sig)
+    return sig
+
+def test_authLogin(logger, tCase, cfg):
+    # Arrange
+    testUrl = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api']['authLogin'])
+    testPayload = tCase['data']
+    expect = tCase['expect']
+    
+    # Act
+    try:
+        sig = authLogin(logger, testUrl, testPayload)
+    except Exception as e:
+        logger.debug(e)
+        sig = None
     
     # Assert
-    _ = common.login(logger, cfg['login']['url'], tCase['expect'])
-    return True
+    if sig and expect: return True
+    if sig is expect: return True
+    
+    return False
 
 def main():
     logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
-    common.runTestSuite(_SUITE_NAME, testRootCreate, logger, suite, cfg)
+    common.runTestSuite(_SUITE_NAME, test_authLogin, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys

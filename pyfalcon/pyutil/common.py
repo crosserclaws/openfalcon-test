@@ -69,7 +69,7 @@ def loadJson(logger, fileName):
     logger.info("[FILE.] %s", fileName)
     with open(fileName) as data_file:
         json_obj = json.load(data_file)
-        logger.info("[JSON.] %s", json_obj)
+        logger.debug("[JSON.] %s", json_obj)
         return json_obj
 
 def login(logger, url, param):
@@ -83,6 +83,7 @@ def login(logger, url, param):
 def checkBadCode(logger, resp):
     if resp.status_code == 200:
         logger.info("[HTTP.] %d", resp.status_code)
+        logger.debug("[HTTP.] %s", resp.text)
         return
     raise Exception("[HTTP.] %s %s" % (resp.status_code, resp.text))
 

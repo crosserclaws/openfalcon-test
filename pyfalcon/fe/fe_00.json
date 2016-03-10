@@ -2,11 +2,25 @@
     {
         "number": "00",
         "data": {
-            "password": "root"
-        },
-        "expect": {
             "name": "root",
             "password": "root"
-        }
+        },
+        "expect": "dummy_string"
+    },
+    {
+        "number": "01",
+        "data": {
+            "name": "root",
+            "password": "incorrect_pw"
+        },
+        "expect": null
+    },
+    {
+        "number": "02",
+        "data": {
+            "name": "invalid_user",
+            "password": "arbitrary_pw"
+        },
+        "expect": null
     }
  ]
