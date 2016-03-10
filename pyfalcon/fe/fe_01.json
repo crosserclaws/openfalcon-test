@@ -2,8 +2,8 @@
     {
         "number": "00",
         "data": {
-            "name": "fake-fe-user",
-            "password": "fake-password",
+            "name": "fake-feuser",
+            "password": "fakepw",
             "cnname": "",
             "email": "fakemail@cepave.com",
             "phone": "",
@@ -11,8 +11,8 @@
             "qq": ""
         },
         "expect": {
-            "name": "fake-fe-user",
-            "password": "fake-password"
+            "name": "fake-feuser",
+            "password": "fakepw"
         }
     }
  ]

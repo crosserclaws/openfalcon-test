@@ -1,30 +1,48 @@
 #!/usr/bin/env python3
 
 import requests
+from fe_00 import authLogin
 from pyutil import common
 
 _SUITE_NAME = 'fe_01'
-_SUITE_DESC = 'API: FE/me/user/c.'
+_SUITE_DESC = 'API: userCreate.'
 
-def testUserCreate(logger, tCase, cfg):
+def userCreate(logger, url, payload, cookies):
+    try:
+        r = requests.post(url, data=payload, cookies={'sig': cookies})
+        common.checkBadCode(logger, r)
+    except Exception as e:
+        logger.debug(e)
+        r = None
+        
+    return r
+
+def test_userCreate(logger, tCase, cfg):
+    # Precondition
+    testCookies = authLogin(logger, cfg['login']['url'], cfg['login']['auth'])
+    if testCookies is None:
+        return False
+    
     # Arrange
-    loginUrl = cfg['login']['url']
-    sig = common.login(logger, loginUrl, cfg['login']['auth'])
     testUrl = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api']['userCreate'])
-    testParam = tCase['data']
+    testPayload = tCase['data']
+    expect = tCase['expect']
     
     # Act
-    r = requests.post(testUrl, data=testParam, cookies={'sig': sig})
-    common.checkBadCode(logger, r)
-    
+    r = userCreate(logger, testUrl, testPayload, testCookies)
+    if r is None:
+        return False
     
     # Assert
-    _ = common.login(logger, loginUrl, tCase['expect'])
+    sig = authLogin(logger, cfg['login']['url'], expect)
+    if sig is None:
+        return False
+    
     return True
 
 def main():
     logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
-    common.runTestSuite(_SUITE_NAME, testUserCreate, logger, suite, cfg)
+    common.runTestSuite(_SUITE_NAME, test_userCreate, logger, suite, cfg)
 
 if __name__ == "__main__":
     import sys

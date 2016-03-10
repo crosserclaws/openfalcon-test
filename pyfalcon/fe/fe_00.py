@@ -7,11 +7,15 @@ _SUITE_NAME = 'fe_00'
 _SUITE_DESC = 'API: authLogin.'
 
 def authLogin(logger, url, payload):
-    r = requests.post(url, data=payload)
-    common.checkBadCode(logger, r)
-
-    sig = r.cookies['sig']
-    logger.debug("[SIG.] %s", sig)
+    try:
+        r = requests.post(url, data=payload)
+        common.checkBadCode(logger, r)
+        sig = r.cookies['sig']
+        logger.debug("[SIG.] %s", sig)
+    except Exception as e:
+        logger.debug(e)
+        sig = None
+    
     return sig
 
 def test_authLogin(logger, tCase, cfg):
@@ -21,11 +25,7 @@ def test_authLogin(logger, tCase, cfg):
     expect = tCase['expect']
     
     # Act
-    try:
-        sig = authLogin(logger, testUrl, testPayload)
-    except Exception as e:
-        logger.debug(e)
-        sig = None
+    sig = authLogin(logger, testUrl, testPayload)
     
     # Assert
     if sig and expect: return True
