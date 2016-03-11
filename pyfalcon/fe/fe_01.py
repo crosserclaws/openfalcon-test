@@ -26,7 +26,7 @@ def test_userCreate(logger, tCase, cfg):
     # Arrange
     testUrl = "http://{:s}:{:d}{:s}".format(cfg['host'], cfg['http'], cfg['api']['userCreate'])
     testPayload = tCase['data']
-    expect = tCase['expect']
+    expectList = tCase['expect']
     
     # Act
     r = userCreate(logger, testUrl, testPayload, testCookies)
@@ -34,11 +34,12 @@ def test_userCreate(logger, tCase, cfg):
         return False
     
     # Assert
-    sig = authLogin(logger, cfg['login']['url'], expect)
-    if sig is None:
-        return False
+    real = r.json()['msg']
+    for expect in expectList:
+        if expect == real:
+            return True
     
-    return True
+    return False
 
 def main():
     logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')

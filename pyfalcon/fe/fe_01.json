@@ -10,9 +10,24 @@
             "im": "",
             "qq": ""
         },
-        "expect": {
-            "name": "fake-feuser",
-            "password": "fakepw"
-        }
+        "expect": [
+            "",
+            "name is already existent"
+        ]
+    },
+    {
+        "number": "01",
+        "data": {
+            "name": "dangerous<&>user",
+            "password": "arbitrarypw",
+            "cnname": "",
+            "email": "fakemail@cepave.com",
+            "phone": "",
+            "im": "",
+            "qq": ""
+        },
+        "expect": [
+            "name pattern is invalid"
+        ]
     }
  ]
