@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import json
 import logging
 import argparse
@@ -26,6 +27,8 @@ def init(loggerName, cfgFileName, suiteFileName, parserCallback=None):
     return logger, cfg, suite, args
 
 def runTestSuite(suiteName, callback, logger, suite, *args):
+    passCount = 0
+    failCount = 0
     allPass = True
     for idx, tCase in enumerate(suite):
         onePass = None
@@ -42,18 +45,15 @@ def runTestSuite(suiteName, callback, logger, suite, *args):
         oneMsg = "[{:s}][#{:02d}] ".format(suiteName, idx)
         # Case report
         if onePass:
-            oneMsg += "PASS."
+            passCount += 1
+            oneMsg += "PASS"
         else:
-            allPass = False
-            oneMsg += "FAIL!"
+            failCount += 1
+            oneMsg += "FAIL"
         print(oneMsg)
     
     # Suite report
-    allMsg = "[{:s}][ALL] ".format(suiteName)
-    if allPass:
-        allMsg += "PASS."
-    else:
-        allMsg += "FAIL!"
+    allMsg = "[{:s}][ALL] Total: {:d} Pass: {:d} Fail: {:d}".format(suiteName, passCount+failCount, passCount, failCount)
     print(allMsg)
 
 def newLogger(loggerName=None):
@@ -86,6 +86,15 @@ def checkBadCode(logger, resp):
         logger.debug("[HTTP.] %s", resp.text)
         return
     raise Exception("[HTTP.] %s %s" % (resp.status_code, resp.text))
+
+def getFnameWoExt(magicFile):
+    """ Return the file name without extension with given __file__. """
+    baseName = os.path.basename(magicFile)
+    return os.path.splitext(baseName)[0]
+
+def getAbsFilePath(magicFile):
+    """ Return the absolute path of file with given __file__. """
+    return os.path.dirname(os.path.abspath(magicFile)) + '/'
 
 def _setParser(parser):
     parser.add_argument(
