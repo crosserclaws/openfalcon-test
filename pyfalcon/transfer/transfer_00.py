@@ -4,8 +4,9 @@ import time
 from pyutil import common
 from pyutil import rpcclient as rc
 
-_SUITE_NAME = 'transfer_00'
 _SUITE_DESC = 'RPC of Transfer.Update. (Act like a fake-agent.)'
+_SUITE_NAME = common.getFnameWoExt(__file__)
+MODULE_PATH = common.getAbsFilePath(__file__)
 
 def testRpcTransferUpdate(logger, tCase, cfg, args):
     # Arrange
@@ -38,7 +39,7 @@ def setParser(parser):
     )
 
 def main():
-    logger, cfg, suite, args = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json', setParser)
+    logger, cfg, suite, args = common.init(_SUITE_NAME, MODULE_PATH + common.CFG_NAME, MODULE_PATH + _SUITE_NAME + '.json', setParser)
     common.runTestSuite(_SUITE_NAME, testRpcTransferUpdate, logger, suite, cfg, args)
 
 if __name__ == "__main__":
