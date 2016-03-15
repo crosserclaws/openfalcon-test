@@ -6,8 +6,9 @@ from fe_00 import authLogin
 from fe_01 import userCreate
 from pyutil import common
 
-_SUITE_NAME = os.path.splitext(__file__)[0]
 _SUITE_DESC = 'API: userQuery.'
+_SUITE_NAME = common.getFnameWoExt(__file__)
+MODULE_PATH = common.getAbsFilePath(__file__)
 
 def userQuery(logger, url, payload, cookies):
     try:
@@ -48,7 +49,7 @@ def test_userQuery(logger, tCase, cfg):
     return False
 
 def main():
-    logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
+    logger, cfg, suite, _ = common.init(_SUITE_NAME, MODULE_PATH + common.CFG_NAME, MODULE_PATH + _SUITE_NAME + '.json')
     common.runTestSuite(_SUITE_NAME, test_userQuery, logger, suite, cfg)
 
 if __name__ == "__main__":

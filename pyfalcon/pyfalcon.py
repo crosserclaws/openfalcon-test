@@ -23,7 +23,7 @@ from pyutil import common
 
 SUITE_MAX = 100
 ROOT_PATH = common.getAbsFilePath(__file__)
-TEST_MODULE = ['alarm', 'fe', 'hbs', 'judge', 'smtp', 'transfer']
+TEST_MODULE = ['fe', 'transfer', 'hbs', 'judge', 'alarm', 'smtp']
 
 _msgFlag = ''
 _handleLevel = logging.DEBUG

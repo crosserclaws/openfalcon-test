@@ -5,8 +5,9 @@ import http.client
 import urllib.parse
 from pyutil import common
 
-_SUITE_NAME = 'smtp_00'
 _SUITE_DESC = 'API: SMTP/mail.'
+_SUITE_NAME = common.getFnameWoExt(__file__)
+MODULE_PATH = common.getAbsFilePath(__file__)
 
 def testApiSmtpMail(logger, tCase, cfg):
     # Arrange & Act
@@ -24,7 +25,7 @@ def testApiSmtpMail(logger, tCase, cfg):
         return False
 
 def main():
-    logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
+    logger, cfg, suite, _ = common.init(_SUITE_NAME, MODULE_PATH + common.CFG_NAME, MODULE_PATH + _SUITE_NAME + '.json')
     common.runTestSuite(_SUITE_NAME, testApiSmtpMail, logger, suite, cfg)
 
 if __name__ == "__main__":

@@ -3,8 +3,9 @@
 import requests
 from pyutil import common
 
-_SUITE_NAME = 'fe_00'
 _SUITE_DESC = 'API: authLogin.'
+_SUITE_NAME = common.getFnameWoExt(__file__)
+MODULE_PATH = common.getAbsFilePath(__file__)
 
 def authLogin(logger, url, payload):
     try:
@@ -34,7 +35,7 @@ def test_authLogin(logger, tCase, cfg):
     return False
 
 def main():
-    logger, cfg, suite, _ = common.init(_SUITE_NAME, common.CFG_NAME, _SUITE_NAME + '.json')
+    logger, cfg, suite, _ = common.init(_SUITE_NAME, MODULE_PATH + common.CFG_NAME, MODULE_PATH + _SUITE_NAME + '.json')
     common.runTestSuite(_SUITE_NAME, test_authLogin, logger, suite, cfg)
 
 if __name__ == "__main__":
