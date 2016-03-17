@@ -1,0 +1,16 @@
+[
+    {
+        "number": "00",
+        "data": {
+            "userCreate": {
+                "name": "userQuery00",
+                "password": "fakepw",
+                "email": "fakemail@cepave.com"
+            },
+            "userQuery": {
+                "query": "userQuery00"
+            }
+        },
+        "expect": "userQuery00"
+    }
+ ]

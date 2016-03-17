@@ -1,0 +1,10 @@
+[
+    {
+        "number": "00",
+        "data": {
+        },
+        "expect": {
+            "counter": "fake-agent/cpu.idle module=transfer-fake"
+        }
+    }
+ ]
