@@ -1,5 +1,5 @@
-# Tmp
-.*.swp
+# Hidden
+.*
 
 # Dir
 __*__

@@ -1,0 +1,10 @@
+{
+    "host": "10.20.30.40",
+    "login": {
+        "url": "http://10.20.30.40:1234/auth/login",
+        "auth": {
+            "name": "root",
+            "password": "root"
+        }
+    }
+}

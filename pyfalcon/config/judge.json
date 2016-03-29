@@ -1,0 +1,10 @@
+{
+    "host": "10.0.0.103",
+    "http": 6081,
+    "httpApi": {
+    },
+    "rpc": 6080,
+    "rpcApi": {
+        "send": "Judge.Send"
+    }
+}
