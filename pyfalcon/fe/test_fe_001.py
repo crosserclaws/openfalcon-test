@@ -31,9 +31,9 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_authLogin(gCfg, feCfg, host, logger, tCase):
     kwargs = feCfg['httpApi']['authLogin']
-    httpC = PyHttp(host, feCfg['http'], logger)
+    httpClient = PyHttp(host, feCfg['http'], logger)
     
-    r = httpC.call(payload=tCase['data'], **kwargs)
+    r = httpClient.call(payload=tCase['data'], **kwargs)
     expt = tCase['expect']
     real = r.json()['msg']
     assert expt == real

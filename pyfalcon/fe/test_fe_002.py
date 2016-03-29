@@ -33,10 +33,10 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_userCreate(gCfg, feCfg, host, logger, tCase):
     kwargs = feCfg['httpApi']['userCreate']
-    httpC = PyHttp(host, feCfg['http'], logger)
+    httpClient = PyHttp(host, feCfg['http'], logger)
     
-    httpC.keepLoginInfo(gCfg['login'])
-    r = httpC.call(payload=tCase['data'], **kwargs)
+    httpClient.keepLoginInfo(gCfg['login'])
+    r = httpClient.call(payload=tCase['data'], **kwargs)
     expt = tCase['expect']
     real = r.json()['msg']
     try:

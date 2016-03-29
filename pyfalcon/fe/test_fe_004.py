@@ -63,20 +63,20 @@ def test_teamCreate(gCfg, feCfg, host, logger, tCase):
     acArgs = feCfg['httpApi']['userCreate']
     aqArgs = feCfg['httpApi']['userQuery']
     kwargs = feCfg['httpApi']['teamCreate']
-    httpC = PyHttp(host, feCfg['http'], logger)
+    httpClient = PyHttp(host, feCfg['http'], logger)
     
-    httpC.keepLoginInfo(gCfg['login'])
+    httpClient.keepLoginInfo(gCfg['login'])
     # Precondition
     for data in tCase['assume']['userCreate']:
-        _ = httpC.call(**acArgs, payload=data)
+        _ = httpClient.call(**acArgs, payload=data)
     ids = ""
     for data in tCase['assume']['userQuery']:    
-        r = httpC.call(**aqArgs, payload=data)
+        r = httpClient.call(**aqArgs, payload=data)
         ids += str(r.json()['users'][0]['id']) + ','
     
     # Act
     tCase['data']['users'] = ids
-    r = httpC.call(**kwargs, payload=tCase['data'])
+    r = httpClient.call(**kwargs, payload=tCase['data'])
     expt = tCase['expect']
     real = r.json()['msg']
     # Assert

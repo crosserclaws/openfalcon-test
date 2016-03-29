@@ -22,11 +22,11 @@ from pyutil.pyhttp import PyHttp
 def test_userQuery(gCfg, feCfg, host, logger, tCase):
     aArgs = feCfg['httpApi']['userCreate']
     kwargs = feCfg['httpApi']['userQuery']
-    httpC = PyHttp(host, feCfg['http'], logger)
-    httpC.keepLoginInfo(gCfg['login'])
+    httpClient = PyHttp(host, feCfg['http'], logger)
+    httpClient.keepLoginInfo(gCfg['login'])
     
-    _ = httpC.call(payload=tCase['assume']['userCreate'], **aArgs)
-    r = httpC.call(payload=tCase['data'], **kwargs)
+    _ = httpClient.call(payload=tCase['assume']['userCreate'], **aArgs)
+    r = httpClient.call(payload=tCase['data'], **kwargs)
     
     real = None
     expt = tCase['expect']
