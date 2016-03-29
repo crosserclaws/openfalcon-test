@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import pytest
-from pyutil import pytool
 from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
@@ -61,8 +60,6 @@ from pyutil.pyhttp import PyHttp
     }
 ])
 def test_teamCreate(gCfg, feCfg, host, logger, tCase):
-    gHost = gCfg.get('host', None)
-    
     acArgs = feCfg['httpApi']['userCreate']
     aqArgs = feCfg['httpApi']['userQuery']
     kwargs = feCfg['httpApi']['teamCreate']
