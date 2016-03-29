@@ -41,7 +41,7 @@ class PyRpc(object):
         resp = self._socket.recv(PyRpc._bufSize)
         if not resp:
             self.logger.debug("[RES<-] ''(Empty_Response)")
-            return None
+            return resp.decode()
         
         resp = json.loads(resp.decode())
         self.logger.debug("[RES<-]\n%s", resp)

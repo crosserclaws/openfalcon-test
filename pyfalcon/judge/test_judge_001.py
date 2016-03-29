@@ -1,4 +1,9 @@
-[
+#!/usr/bin/env python3
+
+import pytest
+from pyutil.pyrpc import PyRpc
+
+@pytest.mark.parametrize("tCase", [
     {
         "number": "00",
         "data": [
@@ -11,8 +16,7 @@
                 "timestamp": 1234567890
             }
         ],
-        "expect": {
-        }
+        "expect": ""
     },
     {
         "number": "01",
@@ -34,7 +38,13 @@
                 "timestamp": 1234567891
             }
         ],
-        "expect": {
-        }
+        "expect": ""
     }
-]
+])
+def test_send(gCfg, judgeCfg, host, logger, tCase):
+    api = judgeCfg['rpcApi']['send']
+    rpcClient = PyRpc(host, judgeCfg['rpc'], logger)
+    
+    r = rpcClient.call(api, tCase['data'])
+    expt = tCase['expect']
+    assert expt == r
