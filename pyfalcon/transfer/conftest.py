@@ -4,6 +4,6 @@ import pytest
 
 @pytest.fixture(scope="session")
 def host(request, gCfg, transferCfg):
-    gHost = gCfg.get('host', None)
-    host = gHost if gHost else transferCfg['host']
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else transferCfg['host']
     return host

@@ -9,18 +9,23 @@ def loadCfg(cfgName):
 
 @pytest.fixture(scope="module")
 def logger(request):
+    verbose = request.config.getoption("-v")
     _logger = pytool.newLogger(request.module.__name__)
-    # _logger.setLevel(logging.DEBUG)
+    _logger.setLevel(logging.DEBUG)
     return _logger
 
+def pytest_addoption(parser):
+    parser.addoption("--dev", action="store_true",
+        help="Use the value in dev.json to override the value in each module with same key. For example: 'host' value.")
 
 ###
 # Config
 ###
 
 @pytest.fixture(scope="session")    
-def gCfg():
-    return loadCfg('global')
+def gCfg(request):
+    dev = request.config.getoption("--dev")
+    return loadCfg('dev') if dev else loadCfg('global')
 
 @pytest.fixture(scope="session")
 def alarmCfg():
