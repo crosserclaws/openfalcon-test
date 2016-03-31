@@ -1,0 +1,10 @@
+{
+    "host": "10.0.0.196",
+    "http": 6060,
+    "httpApi": {
+    },
+    "rpc": 8433,
+    "rpcApi": {
+        "update": "Transfer.Update"
+    }
+}
