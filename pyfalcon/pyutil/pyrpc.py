@@ -34,17 +34,17 @@ class PyRpc(object):
         }
 
         msg = json.dumps(req)
-        self.logger.debug("[REQ->]\n%s", msg)
+        self.logger.debug("[REQ->] %s\n%s", name, msg)
         self._socket.sendall(msg.encode())
 
         # This must loop if resp is bigger than buffer size
         resp = self._socket.recv(PyRpc._bufSize)
         if not resp:
-            self.logger.debug("[RES<-] ''(Empty_Response)")
+            self.logger.debug("[RES<-] %s\n''(Empty_Response)", name)
             return resp.decode()
         
         resp = json.loads(resp.decode())
-        self.logger.debug("[RES<-]\n%s", resp)
+        self.logger.debug("[RES<-] %s\n%s", name, resp)
         self.checkResp(resp, req.get('id'))
         return resp
     

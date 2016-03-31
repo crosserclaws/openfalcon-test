@@ -18,23 +18,22 @@ class PyHttp(object):
         cookies = self.cookies if needLogin else None
         
         if method == 'GET':
-            self.logger.debug('[GET.][REQ->]\n%s', payload)
+            self.logger.debug('[GET.][REQ->] %s\n%s', api, payload)
             r = requests.get(url, params=payload, cookies=cookies)
         elif method == 'POST':
-            self.logger.debug('[POST][REQ->]\n%s', payload)
+            self.logger.debug('[POST][REQ->] %s\n%s', api, payload)
             r = requests.post(url, data=payload, cookies=cookies)
         else:
             raise Exception('Invalid call argument.')
         
+        msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(api, r.status_code, r.text)
+        self.logger.debug(msg)
         self.checkResp(r)
         return r
         
     def checkResp(self, resp):
         """ Raise Exception if the HTTP status code is not 200. """
-        msg = "[HTTP][RES<-]\n{:d} {:s}".format(resp.status_code, resp.text)
-        if resp.status_code == 200:
-            self.logger.debug(msg)
-        else:
+        if resp.status_code != 200:
             raise Exception(msg)
     
     def keepLoginInfo(self, loginDic):
