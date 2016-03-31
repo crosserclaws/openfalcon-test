@@ -4,7 +4,7 @@ import os
 import json
 import logging
 
-logFormat = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
+LOG_FORMAT = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
 logLevel = logging.DEBUG
 
 
@@ -34,12 +34,8 @@ CONFIG_DIR = PYFALCON_DIR + 'config/'
 GLOBAL_CFG_PATH = CONFIG_DIR + 'global.json'
 
 def newLogger(loggerName=None):
+    logging.basicConfig(format=LOG_FORMAT)
     logger = logging.getLogger(loggerName)
-    handler = logging.StreamHandler()
-    handler.setLevel(logLevel)
-    formatter = logging.Formatter(logFormat)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
     return logger
 
 def loadJson(filePath):

@@ -31,7 +31,7 @@ class PyHttp(object):
         
     def checkResp(self, resp):
         """ Raise Exception if the HTTP status code is not 200. """
-        msg = "[HTTP.] {:d} {:s}".format(resp.status_code, resp.text)
+        msg = "[HTTP][RES<-]\n{:d} {:s}".format(resp.status_code, resp.text)
         if resp.status_code == 200:
             self.logger.debug(msg)
         else:

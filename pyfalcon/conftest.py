@@ -11,7 +11,8 @@ def loadCfg(cfgName):
 def logger(request):
     verbose = request.config.getoption("-v")
     _logger = pytool.newLogger(request.module.__name__)
-    _logger.setLevel(logging.DEBUG)
+    logLevel = logging.DEBUG if verbose else logging.WARNING
+    _logger.setLevel(logLevel)
     return _logger
 
 def pytest_addoption(parser):
