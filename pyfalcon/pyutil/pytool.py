@@ -5,8 +5,6 @@ import json
 import logging
 
 LOG_FORMAT = '[%(name)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s'
-logLevel = logging.DEBUG
-
 
 def getFnameWoExt(magicFile):
     """ Return the file name without extension with given __file__. """
@@ -42,43 +40,3 @@ def loadJson(filePath):
     with open(filePath) as fileData:
         fileJson = json.load(fileData)
         return fileJson
-
-    # def __init__(self, magicOpt, loggerName, cfgFileName, suiteFileName):
-    #     # Args
-    #     self._optDic = docopt(magicOpt)
-    #     # Logger
-    #     self.logger = loggerName
-    #     # self.logger.setLevel(self._args.loglevel)
-    #     return
-    #     # Files
-    #     self._cfg = self.loadJson(cfgFileName)
-    #     self._suite = self.loadJson(suiteFileName)
-            
-    # @property
-    # def logger(self):
-    #     print("log getter")
-    #     return self._logger
-    
-    # @logger.setter
-    # def logger(self, loggerName=None):
-    #     print("log setter")
-    #     self._logger = logging.getLogger(loggerName)
-    #     handler = logging.StreamHandler()
-    #     handler.setLevel(logLevel)
-    #     formatter = logging.Formatter(logFormat)
-    #     handler.setFormatter(formatter)
-    #     self.logger.addHandler(handler)
-    
-    # def loadJson(self, filePath):
-    #     self.logger.info("[FILE.] %s", filePath)
-    #     with open(filePath) as fileData:
-    #         fileJson = json.load(fileData)
-    #         self.logger.debug("[JSON.] %s", fileJson)
-    #         return fileJson
-        
-
-### 
-#  Exp
-###
-
-# print(os.path.dirname(__file__))
