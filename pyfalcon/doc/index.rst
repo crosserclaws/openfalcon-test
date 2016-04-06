@@ -22,6 +22,14 @@ Contents:
    transfer.test_transfer_001
 
 
+Utilities:
+
+.. autosummary::
+   :toctree: DIRNAME
+
+   pyutil.pyhttp
+
+
 Indices and tables
 ==================
 
