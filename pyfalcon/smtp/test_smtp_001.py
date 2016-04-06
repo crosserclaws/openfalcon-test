@@ -32,7 +32,7 @@ def test_sendMail(gCfg, smtpCfg, host, logger, tCase):
     The function sends a POST request and check if resp is ``Success.``.
     
     :param dict gCfg: Global config in json.
-    :param dict alarmCfg: Smtp config in json.
+    :param dict smtpCfg: Smtp config in json.
     :param str host: Host IP to send the request.
     :param logger logger: A logger named in the module's name.
     :param dict tetstCase: A test case in json.
