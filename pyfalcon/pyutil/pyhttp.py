@@ -21,7 +21,7 @@ class PyHttp(object):
             raise Exception('Invalid logger argument.')
         
     def call(self, api, payload=None, method='GET', needLogin=False):
-        """ Send a HTTP call with given arguments.
+        """ Send a HTTP call.
         
         :param str api: API of the HTTP request.
         :param dict payload: Payload of the HTTP request.

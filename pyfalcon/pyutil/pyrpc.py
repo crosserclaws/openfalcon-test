@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
+""" RPC Client of Pyfalcon. """
 
 import json
 import socket
 import itertools
 
 class PyRpc(object):
+    """ RPC Client of Pyfalcon.
+    
+    :param str host: Server's IP.
+    :param str port: Server's port.
+    :param logging.Logger logger: A logger for client to do logging.
+    :raises: Exception
+    """
+    
     _bufSize = 4096
 
     def __init__(self, host, port, logger):
@@ -27,6 +36,14 @@ class PyRpc(object):
             self._socket.close()
 
     def call(self, name, *params):
+        """ Send a RPC call.
+        
+        :param str name: Method name of the RPC call.
+        :param params: Arbitrary Argument Lists.
+        :returns: Response in json or, empty string if receive an empty response.
+        :rtype: json or str('').
+        """
+        
         req = {
             'id': next(self._id_iter),
             'params': list(params),
@@ -49,7 +66,13 @@ class PyRpc(object):
         return resp
     
     def checkResp(self, resp, reqId):
-        """ Check 'id' and 'error' in resp. """
+        """ Check the value of 'id' and 'error' in resp.
+        Raise an Exception when either one of them is abnormal.
+        
+        :param dict resp: Response in json.
+        :param int reqId: Request ID.
+        :raises: Exception
+        """
         respId, respErr = resp.get('id'), resp.get('error')
         if respId != reqId:
             raise Exception('[ReqID=%s, ResID=%s] Error: %s'
@@ -58,6 +81,7 @@ class PyRpc(object):
             raise Exception(respErr)
 
 def main():
+    """ Self-testing. """
     import time
     rpc = PyRpc("10.20.30.40", 8433)
     for i in range(5):

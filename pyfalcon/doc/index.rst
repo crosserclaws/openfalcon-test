@@ -28,6 +28,7 @@ Utilities:
    :toctree: DIRNAME
 
    pyutil.pyhttp
+   pyutil.pyrpc
 
 
 Indices and tables
