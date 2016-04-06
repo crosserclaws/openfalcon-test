@@ -12,6 +12,7 @@ Contents:
    :toctree: DIRNAME
 
    alarm.test_alarm_001
+   smtp.test_smtp_001
    transfer.test_transfer_001
 
 
