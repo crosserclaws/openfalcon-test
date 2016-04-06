@@ -3,3 +3,6 @@
 
 # Dir
 __*__
+_[a-z]*
+DIRNAME
+generated

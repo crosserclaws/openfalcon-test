@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Functional test of transfer RPC: Transfer.Update.
+"""
 
 import pytest
 from pyutil.pyrpc import PyRpc
@@ -53,6 +56,17 @@ from pyutil.pyrpc import PyRpc
     }
 ])
 def test_update(gCfg, transferCfg, host, logger, tCase):
+    """
+    Functional test of transfer RPC: Transfer.Update.
+    The function sends a RPC request and check the dict of expt <= resp.
+    
+    :param dict gCfg: Global config in json.
+    :param dict transferCfg: Transfer config in json.
+    :param str host: Host IP to send the request.
+    :param logger logger: A logger named in the module's name.
+    :param dict tetstCase: A test case in json.
+    """
+    
     api = transferCfg['rpcApi']['update']
     rpcClient = PyRpc(host, transferCfg['rpc'], logger)
     

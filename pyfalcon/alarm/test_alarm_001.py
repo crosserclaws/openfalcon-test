@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Functional test of alarm API: /event.
+"""
 
 import pytest
 from pyutil.pyhttp import PyHttp
@@ -23,6 +26,17 @@ from pyutil.pyhttp import PyHttp
     })
 ])
 def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
+    """
+    Functional test of alarm API: /event which is login needed.
+    The function sends a HTTP GET request and check the list of expt <= resp.
+    
+    :param dict gCfg: Global config in json.
+    :param dict alarmCfg: Alarm config in json.
+    :param str host: Host IP to send the request.
+    :param logger logger: A logger named in the module's name.
+    :param dict tetstCase: A test case in json.
+    """
+    
     kwargs = alarmCfg['httpApi']['getEvent']
     httpClient = PyHttp(host, alarmCfg['http'], logger)
     
