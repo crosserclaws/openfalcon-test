@@ -11,7 +11,7 @@ class PyRpc(object):
     :param str host: Server's IP.
     :param str port: Server's port.
     :param logging.Logger logger: A logger for client to do logging.
-    :raises: Exception
+    :raises: Exception.
     """
     
     _bufSize = 4096
@@ -71,7 +71,7 @@ class PyRpc(object):
         
         :param dict resp: Response in json.
         :param int reqId: Request ID.
-        :raises: Exception
+        :raises: Exception.
         """
         respId, respErr = resp.get('id'), resp.get('error')
         if respId != reqId:

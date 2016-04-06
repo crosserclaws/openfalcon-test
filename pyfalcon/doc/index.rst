@@ -29,6 +29,7 @@ Utilities:
 
    pyutil.pyhttp
    pyutil.pyrpc
+   pyutil.pytool
 
 
 Indices and tables

@@ -9,7 +9,7 @@ class PyHttp(object):
     :param str host: Server's IP.
     :param str port: Server's port.
     :param logging.Logger logger: A logger for client to do logging.
-    :raises: Exception
+    :raises: Exception.
     """
     
     def __init__(self, host, port, logger):
@@ -53,7 +53,7 @@ class PyHttp(object):
         """ If the HTTP status code is not 200, raise an Exception.
         
         :param requests.Response resp: The response of a HTTP call.
-        :raises: Exception
+        :raises: Exception.
         """
         
         if resp.status_code != 200:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+""" Utility functions of Pyfalcon. """
 
 import os
 import json
@@ -29,14 +30,24 @@ def getAbsParDir(magicFile):
 
 PYFALCON_DIR = getAbsParDir(__file__)
 CONFIG_DIR = PYFALCON_DIR + 'config/'
-GLOBAL_CFG_PATH = CONFIG_DIR + 'global.json'
 
 def newLogger(loggerName=None):
+    """ Get a logger set in Pyfalcon's format.
+    
+    :param str loggerName: Name of the demanding logger.
+    :returns: Response in json or, empty string if receive an empty response.
+    :rtype: logging.Logger.
+    """
     logging.basicConfig(format=LOG_FORMAT)
     logger = logging.getLogger(loggerName)
     return logger
 
 def loadJson(filePath):
+    """ Get a file's content in json.
+    
+    :param str filePath: Path to the file to be loaded.
+    :returns: File content in json.
+    """
     with open(filePath) as fileData:
         fileJson = json.load(fileData)
         return fileJson
