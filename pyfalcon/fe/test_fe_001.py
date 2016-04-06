@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Functional test of fe HTTP: /auth/login.
+"""
 
 import pytest
 from pyutil.pyhttp import PyHttp
@@ -30,6 +33,17 @@ from pyutil.pyhttp import PyHttp
     }
 ])
 def test_authLogin(gCfg, feCfg, host, logger, tCase):
+    """
+    Functional test of fe HTTP: /auth/login.
+    The function sends a POST request and check resp string.
+    
+    :param dict gCfg: Global config in json.
+    :param dict feCfg: Fe config in json.
+    :param str host: Host IP to send the request.
+    :param logger logger: A logger named in the module's name.
+    :param dict tetstCase: A test case in json.
+    """
+    
     kwargs = feCfg['httpApi']['authLogin']
     httpClient = PyHttp(host, feCfg['http'], logger)
     

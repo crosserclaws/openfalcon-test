@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Functional test of fe HTTP: /me/team/c.
+"""
 
 import pytest
 from pyutil.pyhttp import PyHttp
@@ -60,6 +63,17 @@ from pyutil.pyhttp import PyHttp
     }
 ])
 def test_teamCreate(gCfg, feCfg, host, logger, tCase):
+    """
+    Functional test of fe HTTP: /me/team/c which is login needed.
+    The function sends a POST request and check resp string.
+    
+    :param dict gCfg: Global config in json.
+    :param dict feCfg: Fe config in json.
+    :param str host: Host IP to send the request.
+    :param logger logger: A logger named in the module's name.
+    :param dict tetstCase: A test case in json.
+    """
+    
     acArgs = feCfg['httpApi']['userCreate']
     aqArgs = feCfg['httpApi']['userQuery']
     kwargs = feCfg['httpApi']['teamCreate']
