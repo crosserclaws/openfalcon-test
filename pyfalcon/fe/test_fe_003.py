@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of fe HTTP: /user/query.
+Functional test of HTTP: fe/user/query.
 """
 
 import pytest
@@ -24,7 +24,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_userQuery(gCfg, feCfg, host, logger, tCase):
     """
-    Functional test of fe HTTP: /user/query.
+    Functional test of HTTP: fe/user/query.
     The function sends a GET request and check resp string.
     
     :param dict gCfg: Global config in json.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of hbs RPC: Hbs.GetStrategies.
+Functional test of RPC: Hbs.GetStrategies.
 """
 
 import pytest
@@ -17,7 +17,7 @@ from pyutil.pyrpc import PyRpc
 ])
 def test_getStrategies(gCfg, hbsCfg, host, logger, tCase):
     """
-    Functional test of hbs RPC: Hbs.GetStrategies.
+    Functional test of RPC: Hbs.GetStrategies.
     The function sends a RPC request and check the *dict* of ``expt <= resp``.
     
     :param dict gCfg: Global config in json.

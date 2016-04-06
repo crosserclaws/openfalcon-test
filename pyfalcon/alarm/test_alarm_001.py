@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of alarm HTTP: /event.
+Functional test of HTTP: alarm/event.
 """
 
 import pytest
@@ -27,7 +27,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
     """
-    Functional test of alarm HTTP: /event which is login needed.
+    Functional test of HTTP: alarm/event which is login needed.
     The function sends a GET request and check the *list* of ``expt <= resp``.
     
     :param dict gCfg: Global config in json.

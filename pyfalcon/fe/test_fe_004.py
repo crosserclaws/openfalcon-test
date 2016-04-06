@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of fe HTTP: /me/team/c.
+Functional test of HTTP: fe/me/team/c.
 """
 
 import pytest
@@ -64,7 +64,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_teamCreate(gCfg, feCfg, host, logger, tCase):
     """
-    Functional test of fe HTTP: /me/team/c which is login needed.
+    Functional test of HTTP: fe/me/team/c which is login needed.
     The function sends a POST request and check resp string.
     
     :param dict gCfg: Global config in json.

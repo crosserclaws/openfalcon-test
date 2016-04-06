@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of fe HTTP: /me/user/c.
+Functional test of HTTP: fe/me/user/c.
 """
 
 import pytest
@@ -36,7 +36,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_userCreate(gCfg, feCfg, host, logger, tCase):
     """
-    Functional test of fe HTTP: /me/user/c which is login needed.
+    Functional test of HTTP: fe/me/user/c which is login needed.
     The function sends a POST request and check resp string.
     
     :param dict gCfg: Global config in json.

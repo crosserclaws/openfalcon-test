@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of fe HTTP: /auth/login.
+Functional test of HTTP: fe/auth/login.
 """
 
 import pytest
@@ -34,7 +34,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_authLogin(gCfg, feCfg, host, logger, tCase):
     """
-    Functional test of fe HTTP: /auth/login.
+    Functional test of HTTP: fe/auth/login.
     The function sends a POST request and check resp string.
     
     :param dict gCfg: Global config in json.

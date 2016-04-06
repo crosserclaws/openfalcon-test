@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of smtp HTTP: /mail.
+Functional test of HTTP: smtp/mail.
 """
 
 import pytest
@@ -28,7 +28,7 @@ from pyutil.pyhttp import PyHttp
 ])
 def test_sendMail(gCfg, smtpCfg, host, logger, tCase):
     """
-    Functional test of smtp HTTP: /mail.
+    Functional test of HTTP: smtp/mail.
     The function sends a POST request and check if resp is ``Success.``.
     
     :param dict gCfg: Global config in json.

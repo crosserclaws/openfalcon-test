@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Functional test of judge RPC: Judge.Send.
+Functional test of RPC: Judge.Send.
 """
 
 import pytest
@@ -46,7 +46,7 @@ from pyutil.pyrpc import PyRpc
 ])
 def test_send(gCfg, judgeCfg, host, logger, tCase):
     """
-    Functional test of judge RPC: Judge.Send.
+    Functional test of RPC: Judge.Send.
     The function sends a RPC request and check the ``void`` resp.
     
     :param dict gCfg: Global config in json.
