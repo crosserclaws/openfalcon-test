@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of HTTP: smtp/mail.
-"""
+""" Functional test of HTTP: smtp/mail. """
 
 import pytest
 from pyutil.pyhttp import PyHttp

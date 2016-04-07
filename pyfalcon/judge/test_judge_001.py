@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of RPC: Judge.Send.
-"""
+""" Functional test of RPC: Judge.Send. """
 
 import pytest
 from pyutil.pyrpc import PyRpc

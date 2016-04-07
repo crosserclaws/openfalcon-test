@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of RPC: Transfer.Update.
-"""
+""" Functional test of RPC: Transfer.Update. """
 
 import pytest
 from pyutil.pyrpc import PyRpc

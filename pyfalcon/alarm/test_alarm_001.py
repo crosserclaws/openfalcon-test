@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of HTTP: alarm/event.
-"""
+""" Functional test of HTTP: alarm/event. """
 
 import pytest
 from pyutil.pyhttp import PyHttp

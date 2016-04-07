@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of HTTP: fe/user/query.
-"""
+""" Functional test of HTTP: fe/user/query. """
 
 import pytest
 from pyutil.pyhttp import PyHttp

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of RPC: Hbs.GetStrategies.
-"""
+""" Functional test of RPC: Hbs.GetStrategies. """
 
 import pytest
 from pyutil.pyrpc import PyRpc

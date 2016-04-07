@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Functional test of HTTP: fe/auth/login.
-"""
+""" Functional test of HTTP: fe/auth/login. """
 
 import pytest
 from pyutil.pyhttp import PyHttp
