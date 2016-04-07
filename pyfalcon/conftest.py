@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+""" Project level config of pytest. """
 
 import logging
 import pytest
