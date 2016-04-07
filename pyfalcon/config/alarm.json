@@ -1,0 +1,12 @@
+{
+    "host": "10.0.0.102",
+    "http": 9912,
+    "debug": true,
+    "httpApi": {
+        "getEvent": {
+            "method": "GET",
+            "api": "/event",
+            "needLogin": true   
+        }
+    }
+}

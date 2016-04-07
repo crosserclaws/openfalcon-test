@@ -1,0 +1,8 @@
+{
+    "host": "10.0.0.200",
+    "http": 6031,
+    "rpc": 6030,
+    "rpcApi": {
+        "getStrategies": "Hbs.GetStrategies"
+    }
+}

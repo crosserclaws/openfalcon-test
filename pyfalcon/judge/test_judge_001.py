@@ -1,4 +1,10 @@
-[
+#!/usr/bin/env python3
+""" Functional test of RPC: Judge.Send. """
+
+import pytest
+from pyutil.pyrpc import PyRpc
+
+@pytest.mark.parametrize("tCase", [
     {
         "number": "00",
         "data": [
@@ -11,8 +17,7 @@
                 "timestamp": 1234567890
             }
         ],
-        "expect": {
-        }
+        "expect": ""
     },
     {
         "number": "01",
@@ -34,7 +39,24 @@
                 "timestamp": 1234567891
             }
         ],
-        "expect": {
-        }
+        "expect": ""
     }
-]
+])
+def test_send(gCfg, judgeCfg, host, logger, tCase):
+    """
+    Functional test of RPC: Judge.Send.
+    The function sends a RPC request and check the ``void`` resp.
+    
+    :param dict gCfg: Global config in json.
+    :param dict judgeCfg: Judge config in json.
+    :param str host: Host IP to send the request.
+    :param logger logger: A logger named in the module's name.
+    :param dict tetstCase: A test case in json.
+    """
+    
+    api = judgeCfg['rpcApi']['send']
+    rpcClient = PyRpc(host, judgeCfg['rpc'], logger)
+    
+    r = rpcClient.call(api, tCase['data'])
+    expt = tCase['expect']
+    assert expt == r

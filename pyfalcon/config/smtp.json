@@ -1,0 +1,11 @@
+{
+    "host": "10.0.0.194",
+    "http": 9000,
+    "httpApi": {
+        "sendMail": {
+            "method": "POST",
+            "api": "/mail",
+            "needLogin": false   
+        }
+    }
+}
