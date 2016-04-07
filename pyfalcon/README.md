@@ -9,7 +9,7 @@ Need [pip3](https://github.com/pypa/pip) and dependent packages in *requirement.
     $ pip3 install -r requirements.txt
 
 ### Configuration
-Configurations are in **config/** dir, remember to set the **host address** of each components.
+Configurations are under **config/** dir, remember to set the **host address** of each components.
 
 Specially, *global.json* recordes the info used for getting login session.
 ```json
@@ -26,11 +26,11 @@ Specially, *global.json* recordes the info used for getting login session.
 
 ## Getting started
 
-Simply exectute [pytest](https://github.com/pytest-dev/pytest) at project's root.
+Simply exectute [pytest](https://github.com/pytest-dev/pytest) under project's root (i.e. **pyfalcon/**). Note that the name of the test should follow the [rules](https://pytest.org/latest/goodpractices.html#conventions-for-python-test-discovery).
 
-* `$ py.test`: All tests in ***pwd*** (i.e. **pyfalcon/**).
-* `$ py.test fe hbs`: All tests in **fe/** and **hbs/** dir.
-* `$ py.test fe/test_fe_001.py hbs/test_hbs_001.py`: All tests in files.
+* `$ py.test`: Recursively discover and run tests within ***pwd***.
+* `$ py.test fe hbs`: Recursively discover and run tests within **fe/** and **hbs/** dir.
+* `$ py.test fe/test_fe_001.py hbs/test_hbs_001.py`: Discover and run tests within given files.
 
 ### Frequently used options
 
@@ -63,17 +63,17 @@ With `--dev`, *dev.json* may be useful if all components are on the same machine
 ```
 
 ## Documentation
-Docs are auto-generated from docstrings in files by [Sphinx](http://www.sphinx-doc.org/en/stable/).
+Docs are auto-generated from docstrings within files by [Sphinx](http://www.sphinx-doc.org/en/stable/).
 
-### Build docs
-In **doc/** dir, use *Makefile* to generate html docs.
+### Build and get docs
+Under **doc/** dir, use *Makefile* to generate html docs.
 
     $ make html
 
 Then, open ***doc/_build/html/index.html*** in the browser.
 
-### Add new module into docs
-Update  new module's path into the ***doc/index.rst***. Take ***fe/test_fe_999*** as an example:
+### Add new test into docs
+Update new test's path into ***doc/index.rst*** then rebuild it. Take ***fe/test_fe_999*** as an example:
 
 ```rst
 Welcome to pyfalcon's documentation!
