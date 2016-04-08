@@ -24,7 +24,7 @@ def pytest_addoption(parser):
 # Config
 ###
 
-@pytest.fixture(scope="session")    
+@pytest.fixture(scope="session")
 def gCfg(request):
     dev = request.config.getoption("--dev")
     return loadCfg('dev') if dev else loadCfg('global')

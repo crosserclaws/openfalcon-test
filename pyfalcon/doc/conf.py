@@ -33,6 +33,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
+    'sphinx.ext.viewcode',
 ]
 autodoc_default_flags = ['members']
 autosummary_generate = True

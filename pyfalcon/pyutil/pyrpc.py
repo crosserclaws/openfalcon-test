@@ -54,7 +54,7 @@ class PyRpc(object):
         self.logger.debug("[REQ->] %s\n%s", name, msg)
         self._socket.sendall(msg.encode())
 
-        # This must loop if resp is bigger than buffer size
+        # Need to receive multiple times if resp is bigger than buffer size.
         resp = self._socket.recv(PyRpc._bufSize)
         if not resp:
             self.logger.debug("[RES<-] %s\n''(Empty_Response)", name)
