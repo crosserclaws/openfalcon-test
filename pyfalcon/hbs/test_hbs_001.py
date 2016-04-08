@@ -16,7 +16,7 @@ from pyutil.pyrpc import PyRpc
 def test_getStrategies(gCfg, hbsCfg, host, logger, tCase):
     """
     Functional test of RPC: Hbs.GetStrategies.
-    The function sends a RPC request and check the *dict* of ``expt <= resp``.
+    The function sends a RPC request and check the *dict* that ``expt <= resp``.
     
     :param dict gCfg: Global config in json.
     :param dict hbsCfg: Hbs config in json.

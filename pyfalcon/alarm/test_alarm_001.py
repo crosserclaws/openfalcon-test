@@ -26,7 +26,7 @@ from pyutil.pyhttp import PyHttp
 def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
     """
     Functional test of HTTP: alarm/event which is login needed.
-    The function sends a GET request and check the *list* of ``expt <= resp``.
+    The function sends a GET request and check the *list* that ``expt <= resp``.
     
     :param dict gCfg: Global config in json.
     :param dict alarmCfg: Alarm config in json.

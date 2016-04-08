@@ -56,7 +56,7 @@ from pyutil.pyrpc import PyRpc
 def test_update(gCfg, transferCfg, host, logger, tCase):
     """
     Functional test of RPC: Transfer.Update.
-    The function sends a RPC request and check the *dict* of ``expt <= resp``.
+    The function sends a RPC request and check the *dict* that ``expt <= resp``.
     
     :param dict gCfg: Global config in json.
     :param dict transferCfg: Transfer config in json.
