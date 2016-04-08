@@ -2,6 +2,11 @@
     "host": "10.0.0.196",
     "http": 6060,
     "httpApi": {
+        "apiPush": {
+            "method": "POST",
+            "api": "/api/push",
+            "needLogin": false
+        }
     },
     "rpc": 8433,
     "rpcApi": {

@@ -20,6 +20,7 @@ Contents:
    judge.test_judge_001
    smtp.test_smtp_001
    transfer.test_transfer_001
+   transfer.test_transfer_002
 
 
 Utilities:
