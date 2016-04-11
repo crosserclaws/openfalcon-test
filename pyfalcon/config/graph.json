@@ -6,6 +6,11 @@
             "method": "GET",
             "api": "/api/recv",
             "needLogin": false
+        },
+        "getConfig": {
+            "method": "GET",
+            "api": "/config",
+            "needLogin": false
         }
     },
     "rpc": 6070,

@@ -51,3 +51,15 @@ def loadJson(filePath):
     with open(filePath) as fileData:
         fileJson = json.load(fileData)
         return fileJson
+
+def assertSubsetKeysInDic(subDict, Dict):
+    """ Test that every key in subDict is in Dict. Test recursively if nested dictionary exists.
+    
+    :param dict subDict: Consists of subset of keys.
+    :param dict Dict: Consists of superset of keys.
+    :raises: AssertionError.
+    """
+    for key in subDict:
+        assert key in Dict
+        if isinstance(subDict[key], dict):
+            assertSubsetKeysInDic(subDict[key], Dict[key])
