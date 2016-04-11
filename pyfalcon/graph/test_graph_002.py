@@ -6,8 +6,35 @@ from pyutil import pytool
 from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
-    {
+    pytest.mark.skipif(pytest.config.getvalue('--dev'), reason='Inconsistent config file version.') ({
         "number": "00",
+        "data": {
+        },
+        "expect": {
+            "msg": "success",
+            "data": {
+                "pid": "",
+                "debug": False,
+                "http": {
+                    "enabled": True,
+                    "listen": "0.0.0.0:6071"
+                },
+                "rpc": {
+                    "enabled": True,
+                    "listen": "0.0.0.0:6070"
+                },
+                "rrd": {
+                    "storage": "/home/graph/data/6070"
+                },
+                "db": {
+                    "dsn": "user:password@tcp(250.251.252.253:3306)/graph?loc=Local&parseTime=true",
+                    "maxIdle": 4
+                }
+            }
+        }
+    }),
+    pytest.mark.skipif(not pytest.config.getvalue('--dev'), reason='Inconsistent config file version.') ({
+        "number": "01",
         "data": {
         },
         "expect": {
@@ -32,7 +59,7 @@ from pyutil.pyhttp import PyHttp
                 }
             }
         }
-    }
+    })
 ])
 def test_getConfig(gCfg, graphCfg, host, logger, tCase):
     """

@@ -9,9 +9,9 @@ from pyutil.pyhttp import PyHttp
         "number": "00",
         "data": {
             "name": "root",
-            "password": "root"
+            "password": "error_password"
         },
-        "expect": ""
+        "expect": "password error"
     },
     {
         "number": "01",
