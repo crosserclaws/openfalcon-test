@@ -16,6 +16,7 @@ Contents:
    fe.test_fe_002
    fe.test_fe_003
    fe.test_fe_004
+   graph.test_graph_001
    hbs.test_hbs_001
    judge.test_judge_001
    smtp.test_smtp_001

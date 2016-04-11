@@ -38,6 +38,10 @@ def feCfg():
     return loadCfg('fe')
 
 @pytest.fixture(scope="session")
+def graphCfg():
+    return loadCfg('graph')
+
+@pytest.fixture(scope="session")
 def hbsCfg():
     return loadCfg('hbs')
 

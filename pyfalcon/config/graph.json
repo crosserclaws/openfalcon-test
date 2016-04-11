@@ -1,0 +1,14 @@
+{
+    "host": "10.0.0.196",
+    "http": 6071,
+    "httpApi": {
+        "apiRecv": {
+            "method": "GET",
+            "api": "/api/recv",
+            "needLogin": false
+        }
+    },
+    "rpc": 6070,
+    "rpcApi": {
+    }
+}
