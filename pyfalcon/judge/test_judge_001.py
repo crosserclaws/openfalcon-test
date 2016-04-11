@@ -50,8 +50,8 @@ def test_send(gCfg, judgeCfg, host, logger, tCase):
     :param dict gCfg: Global config in json.
     :param dict judgeCfg: Judge config in json.
     :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param logging.Logger logger: A logger named in the module's name.
+    :param dict tCase: A test case in json.
     """
     
     api = judgeCfg['rpcApi']['send']

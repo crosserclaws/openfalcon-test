@@ -24,8 +24,8 @@ def test_apiRecv(gCfg, graphCfg, host, logger, tCase):
     :param dict gCfg: Global config in json.
     :param dict graphCfg: Graph config in json.
     :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param logging.Logger logger: A logger named in the module's name.
+    :param dict tCase: A test case in json.
     
     .. note:: Make sure that the data should in the same order as
               **endpoint/metric/ts/step/dstype/value** whose types are str/str/int/int/str/float.
