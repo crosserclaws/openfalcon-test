@@ -14,7 +14,7 @@ from pyutil.pyhttp import PyHttp
         }
     }
 ])
-def test_getConfig(gCfg, graphCfg, host, logger, tCase):
+def test_getCount(gCfg, graphCfg, host, logger, tCase):
     """
     Functional test of HTTP: graph/count.
     The function sends a GET request; then checks if resp is an *integer*.
