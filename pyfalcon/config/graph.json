@@ -21,6 +21,11 @@
             "method": "GET",
             "api": "/counter/all",
             "needLogin": false
+        },
+        "indexUpdateAll": {
+            "method": "GET",
+            "api": "/index/updateAll",
+            "needLogin": false
         }
     },
     "rpc": 6070,
