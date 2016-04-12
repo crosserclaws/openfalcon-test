@@ -14,6 +14,16 @@ from pyutil.pyhttp import PyHttp
             "msg": "success",
             "data": "ok"
         }
+    },
+    {
+        "number": "01",
+        "data": [
+            "test_apiRecv_host", "cpu.user", 1456286162, 60
+        ],
+        "expect": {
+            "msg": "success",
+            "data": "bad args"
+        }
     }
 ])
 def test_apiRecv(gCfg, graphCfg, host, logger, tCase):

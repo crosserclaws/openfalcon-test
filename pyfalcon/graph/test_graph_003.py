@@ -10,8 +10,7 @@ from pyutil.pyhttp import PyHttp
         "number": "00",
         "data": {
         },
-        "expect": {
-        }
+        "expect": 0
     }
 ])
 def test_getCount(gCfg, graphCfg, host, logger, tCase):
