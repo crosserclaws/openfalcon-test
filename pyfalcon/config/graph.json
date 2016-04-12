@@ -16,6 +16,11 @@
             "method": "GET",
             "api": "/count",
             "needLogin": false
+        },
+        "getCounterAll": {
+            "method": "GET",
+            "api": "/counter/all",
+            "needLogin": false
         }
     },
     "rpc": 6070,

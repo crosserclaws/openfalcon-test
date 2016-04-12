@@ -64,7 +64,7 @@ from pyutil.pyhttp import PyHttp
 def test_getConfig(gCfg, graphCfg, host, logger, tCase):
     """
     Functional test of HTTP: graph/config.
-    The function sends a GET request; then checks if ``{"msg": "success"}`` is in resp and recursively tests subset keys.
+    The function sends a GET request; then checks success message and recursively tests subset keys in resp.
     
     :param dict gCfg: Global config in json.
     :param dict graphCfg: Graph config in json.
