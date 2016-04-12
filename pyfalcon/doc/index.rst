@@ -20,6 +20,7 @@ Contents:
    graph.test_graph_002
    graph.test_graph_003
    graph.test_graph_004
+   graph.test_graph_005
    hbs.test_hbs_001
    judge.test_judge_001
    smtp.test_smtp_001
