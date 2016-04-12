@@ -11,6 +11,11 @@
             "method": "GET",
             "api": "/config",
             "needLogin": false
+        },
+        "getCount": {
+            "method": "GET",
+            "api": "/count",
+            "needLogin": false
         }
     },
     "rpc": 6070,
