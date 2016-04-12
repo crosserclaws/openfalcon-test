@@ -26,6 +26,8 @@ def test_getCounterAll(gCfg, graphCfg, host, logger, tCase):
     :param str host: Host IP to send the request.
     :param logging.Logger logger: A logger named in the module's name.
     :param dict tCase: A test case in json.
+    
+    .. note:: Ignore the "Qps" field in counter since not every counter owns that field. 
     """
     
     kwargs = graphCfg['httpApi']['getCounterAll']
