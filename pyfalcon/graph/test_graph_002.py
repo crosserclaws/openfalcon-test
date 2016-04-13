@@ -6,7 +6,7 @@ from pyutil import pytool
 from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
-    pytest.mark.skipif(pytest.config.getvalue('--dev'), reason='Inconsistent config file version.') ({
+    pytest.mark.env("glob") ({
         "number": "00",
         "data": {
         },
@@ -33,7 +33,7 @@ from pyutil.pyhttp import PyHttp
             }
         }
     }),
-    pytest.mark.skipif(not pytest.config.getvalue('--dev'), reason='Inconsistent config file version.') ({
+    pytest.mark.env("dev") ({
         "number": "01",
         "data": {
         },

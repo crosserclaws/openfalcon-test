@@ -16,9 +16,27 @@ def logger(request):
     _logger.setLevel(logLevel)
     return _logger
 
+###
+# Custom marker and command line option
+###
+
 def pytest_addoption(parser):
     parser.addoption("--dev", action="store_true",
         help="Use the value in dev.json to override the value in each module with same key. For example: 'host' value.")
+
+def pytest_configure(config):
+    # register an additional marker
+    config.addinivalue_line("markers",
+        "env(name): mark test to run only on named environment")
+
+def pytest_runtest_setup(item):
+    log = logging.getLogger()
+    env = "dev" if item.config.getoption("--dev") else "glob"
+    envmarker = item.get_marker("env")
+    if envmarker is not None:
+        envname = envmarker.args[0]
+        if envname != env:
+            pytest.skip("test requires env %r" % envname)
 
 ###
 # Config
