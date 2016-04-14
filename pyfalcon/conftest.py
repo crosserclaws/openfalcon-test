@@ -91,6 +91,14 @@ def alarmHttp(request, gCfg, alarmCfg):
     client.keepLoginInfo(gCfg['login'])
     return client
 
+@pytest.fixture(scope="session")
+def feHttp(request, gCfg, feCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else feCfg['host']
+    client = PyHttp(host, feCfg['http'])
+    client.keepLoginInfo(gCfg['login'])
+    return client
+
 ###
 # RPC Client
 ###

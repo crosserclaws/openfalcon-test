@@ -14,7 +14,7 @@ import pytest
 def test_getEvent(alarmCfg, alarmHttp, loggerName, tCase):
     """
     Functional test of HTTP: alarm/event which is login needed.
-    Sends a GET request and tests the *list* that ``expt <= resp``.
+    Send a GET request and test the *list* that ``expt <= resp``.
     
     :param dict alarmCfg: Alarm config.
     :param PyHttp alarmHttp: A HTTP client of alarm.
