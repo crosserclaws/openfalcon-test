@@ -10,18 +10,9 @@ from pyutil.pyhttp import PyHttp
         "data": {
         },
         "expect":[
-        ]
-    },
-    pytest.mark.xfail({
-        "number": "01",
-        "data": {
-        },
-        "expect": [
-            {
-                "counter": "fake-agent/cpu.idle module=transfer-fake"
-            }
-        ]
-    })
+        ],
+        "assert": "Get incorrect resp with standard req, API may have some problems."
+    }
 ])
 def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
     """
@@ -33,6 +24,12 @@ def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
     :param str host: Host IP to send the request.
     :param logging.Logger logger: A logger named in the module's name.
     :param dict tCase: A test case in json.
+    
+    ==========   ====================================================================
+    Case #       Description
+    ==========   ====================================================================
+    00           Test the api is working normally if receives a expcted data format.
+    ==========   ====================================================================
     """
     
     kwargs = alarmCfg['httpApi']['getEvent']
@@ -42,4 +39,4 @@ def test_getEvent(gCfg, alarmCfg, host, logger, tCase):
     r = httpClient.call(payload=tCase['data'], **kwargs)
     expt = tCase['expect']
     real = r.json()
-    assert expt <= real
+    assert expt <= real, tCase['assert']
