@@ -4,17 +4,21 @@
 import logging
 import pytest
 from pyutil import pytool
+from pyutil.pyhttp import PyHttp
 
 def loadCfg(cfgName):
     return pytool.loadJson(pytool.CONFIG_DIR + cfgName + '.json')
 
 @pytest.fixture(scope="module")
+def loggerName(request):
+    return request.module.__name__
+
+@pytest.fixture(scope="module", autouse=True)
 def logger(request):
     verbose = request.config.getoption("-v")
     _logger = pytool.newLogger(request.module.__name__)
     logLevel = logging.DEBUG if verbose else logging.WARNING
     _logger.setLevel(logLevel)
-    return _logger
 
 ###
 # Custom marker and command line option
@@ -74,3 +78,19 @@ def smtpCfg():
 @pytest.fixture(scope="session")
 def transferCfg():
     return loadCfg('transfer')
+
+###
+# HTTP Client
+###
+
+@pytest.fixture(scope="session")
+def alarmHttp(request, gCfg, alarmCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else alarmCfg['host']
+    client = PyHttp(host, alarmCfg['http'])
+    client.keepLoginInfo(gCfg['login'])
+    return client
+
+###
+# RPC Client
+###
