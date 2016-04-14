@@ -46,10 +46,10 @@ class PyHttp(object):
         
         msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(api, r.status_code, r.text)
         self.logger.debug(msg)
-        self.checkResp(r)
+        self.checkResp(r, msg)
         return r
         
-    def checkResp(self, resp):
+    def checkResp(self, resp, msg):
         """ If the HTTP status code is not 200, raise an Exception.
         
         :param requests.Response resp: The response of a HTTP call.
@@ -64,9 +64,10 @@ class PyHttp(object):
         
         :param dict loginDic: Info for getting login session.
         """
+        msg = 'Login Error.'
         r = requests.post(loginDic['url'], data=loginDic['auth'])
-        self.checkResp(r)
+        self.checkResp(r, msg)
         
-        session = r.cookies['sig']
+        session = r.cookies.get('sig', None)
+        if session is None: raise Exception(msg)
         self.cookies = {'sig': session}
-        self.logger.debug("[SIG.] %s", session)
