@@ -32,7 +32,7 @@ def test_userQuery(feCfg, feHttp, loggerName, tCase):
     :param dict tCase: Data of a test case.
     
     **Precondition:**
-        * API ``userCreate`` may be needed.
+        * API ``userCreate`` is working normally.
         * An account used for login have the authority to create user.
     
     ==========   ==============================================================

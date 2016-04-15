@@ -31,7 +31,6 @@ class PyHttp(object):
         r = None
         url = self.addr + api
         cookies = self.cookies if needLogin else None
-        print("[loggerName]", loggerName)
         logger = logging.getLogger(loggerName)
         
         if method == 'GET':
