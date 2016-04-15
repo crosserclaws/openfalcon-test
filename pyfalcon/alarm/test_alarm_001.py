@@ -8,7 +8,7 @@ import pytest
         "number": "00",
         "data": {},
         "expect":[],
-        "assert": "Get incorrect resp with standard req, API may have some problems."
+        "assert": "A valid call but receive incorrect resp type, API may have some problems."
     }
 ])
 def test_getEvent(alarmCfg, alarmHttp, loggerName, tCase):

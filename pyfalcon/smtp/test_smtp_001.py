@@ -42,6 +42,7 @@ def test_sendMail(smtpCfg, smtpHttp, loggerName, tCase):
     01           Mail with acceptably invalid data to test if it is working normally.
     ==========   ==============================================================
     """
+    
     kwargs = smtpCfg['httpApi']['sendMail']
     
     r = smtpHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
