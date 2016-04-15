@@ -39,7 +39,7 @@ def test_sendMail(smtpCfg, smtpHttp, loggerName, tCase):
     Case #       Description
     ==========   ==============================================================
     00           Mail with valid data to test if it is working normally.
-    01           Mail with acceptably data to test if it is working normally.
+    01           Mail with acceptably invalid data to test if it is working normally.
     ==========   ==============================================================
     """
     kwargs = smtpCfg['httpApi']['sendMail']

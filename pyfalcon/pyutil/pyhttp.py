@@ -34,15 +34,15 @@ class PyHttp(object):
         logger = logging.getLogger(loggerName)
         
         if method == 'GET':
-            logger.debug('[GET.][REQ->] %s\n%s', api, payload)
+            logger.debug('[GET.][REQ->] %s\n%s', url, payload)
             r = requests.get(url, params=payload, cookies=cookies)
         elif method == 'POST':
-            logger.debug('[POST][REQ->] %s\n%s', api, payload)
+            logger.debug('[POST][REQ->] %s\n%s', url, payload)
             r = requests.post(url, data=payload, cookies=cookies)
         else:
             raise Exception('Invalid call argument.')
         
-        msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(api, r.status_code, r.text)
+        msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(url, r.status_code, r.text)
         logger.debug(msg)
         self.checkResp(r, msg)
         return r

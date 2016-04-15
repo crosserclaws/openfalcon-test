@@ -48,19 +48,20 @@ class PyRpc(object):
             'method': name
         }
         msg = json.dumps(req)
+        dest = 'tcp://{:s}:{:d}/{:s}'.format(self.host, self.port, name)
         logger = logging.getLogger(loggerName)
         
-        logger.debug("[REQ->] %s\n%s", name, msg)
+        logger.debug("[REQ->] %s\n%s", dest, msg)
         self._socket.sendall(msg.encode())
 
         # Need to receive multiple times if resp is bigger than buffer size.
         resp = self._socket.recv(PyRpc._bufSize)
         if not resp:
-            logger.debug("[RES<-] %s\n''(Empty_Response)", name)
+            logger.debug("[RES<-] %s\n''(Empty_Response)", dest)
             return resp.decode()
         
         resp = json.loads(resp.decode())
-        logger.debug("[RES<-] %s\n%s", name, resp)
+        logger.debug("[RES<-] %s\n%s", dest, resp)
         self.checkResp(resp, req.get('id'))
         return resp
     
