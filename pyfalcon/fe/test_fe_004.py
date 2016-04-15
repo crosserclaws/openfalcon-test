@@ -26,7 +26,7 @@ import pytest
             "users": "USER_ID"
         },
         "expect": "",
-        "assert": "Create team with valid data but getting unexpected msg."
+        "assert": "Create team with valid data but get unexpected msg."
     },
     {
         "number": "01",
@@ -58,7 +58,7 @@ import pytest
             "users": "USER_ID_010, USER_ID_011"
         },
         "expect": "",
-        "assert": "Create team with valid data but getting unexpected msg."
+        "assert": "Create team with valid data but get unexpected msg."
     }
 ])
 def test_teamCreate(feCfg, feHttp, loggerName, tCase):

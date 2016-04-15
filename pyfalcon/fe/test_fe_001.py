@@ -11,7 +11,7 @@ import pytest
             "password": "error_password"
         },
         "expect": "password error",
-        "assert": "Login with incorrect pwd but getting unexpected error msg."
+        "assert": "Login with incorrect pwd but get unexpected error msg."
     },
     {
         "number": "01",
@@ -20,7 +20,7 @@ import pytest
             "password": "arbitrary_pw"
         },
         "expect": "name or password is blank",
-        "assert": "Login with blank username but getting unexpected error msg."
+        "assert": "Login with blank username but get unexpected error msg."
     },
     {
         "number": "02",
@@ -29,7 +29,7 @@ import pytest
             "password": ""
         },
         "expect": "name or password is blank",
-        "assert": "Login with blank pwd but getting unexpected error msg."
+        "assert": "Login with blank pwd but get unexpected error msg."
     }
 ])
 def test_authLogin(feCfg, feHttp, loggerName, tCase):

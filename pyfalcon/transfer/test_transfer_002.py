@@ -3,7 +3,6 @@
 
 import json
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -27,26 +26,31 @@ from pyutil.pyhttp import PyHttp
                 "Invalid": 0,
                 "Latency": 0
             }
-        }
+        },
+        "assert": "Push with valid data but get incorrect resp."
     }
 ])
-def test_apiPush(gCfg, transferCfg, host, logger, tCase):
+def test_apiPush(transferCfg, transferHttp, loggerName, tCase):
     """
     Functional test of HTTP: transfer/api/push.
-    The function sends a POST request and check the *dict* that ``expt == real``.
+    Send a POST request and test if the resp is valid.
     
-    :param dict gCfg: Global config in json.
-    :param dict transferCfg: Transfer config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict transferCfg: Transfer config.
+    :param PyHttp transferHttp: A HTTP client of transfer.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Push with valid data to test if it is working normally.
+    ==========   ==============================================================
     """
     
     kwargs = transferCfg['httpApi']['apiPush']
-    httpClient = PyHttp(host, transferCfg['http'], logger)
     
     # Convert list into string for raw payload.
-    r = httpClient.call(payload=json.dumps(tCase['data']), **kwargs)
+    r = transferHttp.call(payload=json.dumps(tCase['data']), **kwargs, loggerName=loggerName)
     expt = tCase['expect']
     real = r.json()
-    assert expt == real
+    assert expt == real, tCase['assert']

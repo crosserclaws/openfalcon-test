@@ -17,7 +17,7 @@ import pytest
             "query": "userQuery00"
         },
         "expect": "userQuery00",
-        "assert": "Give valid data to query user but getting unexpected msg."
+        "assert": "Give valid data to query user but get unexpected msg."
     }
 ])
 def test_userQuery(feCfg, feHttp, loggerName, tCase):

@@ -16,7 +16,7 @@ import pytest
             "qq": ""
         },
         "expect": "",
-        "assert": "Give valid data to create user but getting unexpected msg."
+        "assert": "Give valid data to create user but get unexpected msg."
     },
     {
         "number": "01",
@@ -30,7 +30,7 @@ import pytest
             "qq": ""
         },
         "expect": "name pattern is invalid",
-        "assert": "Give invalid username to create user but getting unexpected msg."
+        "assert": "Give invalid username to create user but get unexpected msg."
     }
 ])
 def test_userCreate(feCfg, feHttp, loggerName, tCase):

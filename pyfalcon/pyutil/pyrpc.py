@@ -3,6 +3,7 @@
 
 import json
 import socket
+import logging
 import itertools
 
 class PyRpc(object):
@@ -16,7 +17,9 @@ class PyRpc(object):
     
     _bufSize = 4096
 
-    def __init__(self, host, port, logger):
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self._createSuccess = True
         self._id_iter = itertools.count()
         # Socket
@@ -25,17 +28,12 @@ class PyRpc(object):
         except Exception as e:
             self._createSuccess = False
             raise
-        # Logger
-        if logger is not None:
-            self.logger = logger
-        else:
-            raise Exception('Invalid logger argument.')
 
     def __del__(self):
         if self._createSuccess:
             self._socket.close()
 
-    def call(self, name, *params):
+    def call(self, name, *params, loggerName=None):
         """ Send a RPC call.
         
         :param str name: Method name of the RPC call.
@@ -49,19 +47,20 @@ class PyRpc(object):
             'params': list(params),
             'method': name
         }
-
         msg = json.dumps(req)
-        self.logger.debug("[REQ->] %s\n%s", name, msg)
+        logger = logging.getLogger(loggerName)
+        
+        logger.debug("[REQ->] %s\n%s", name, msg)
         self._socket.sendall(msg.encode())
 
         # Need to receive multiple times if resp is bigger than buffer size.
         resp = self._socket.recv(PyRpc._bufSize)
         if not resp:
-            self.logger.debug("[RES<-] %s\n''(Empty_Response)", name)
+            logger.debug("[RES<-] %s\n''(Empty_Response)", name)
             return resp.decode()
         
         resp = json.loads(resp.decode())
-        self.logger.debug("[RES<-] %s\n%s", name, resp)
+        logger.debug("[RES<-] %s\n%s", name, resp)
         self.checkResp(resp, req.get('id'))
         return resp
     

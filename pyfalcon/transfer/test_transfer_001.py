@@ -2,7 +2,6 @@
 """ Functional test of RPC: Transfer.Update. """
 
 import pytest
-from pyutil.pyrpc import PyRpc
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -22,7 +21,8 @@ from pyutil.pyrpc import PyRpc
             "Invalid": 0,
             "Total": 1,
             "Message": "ok"
-        }
+        },
+        "assert": "Update with valid data but get incorrect resp."
     },
     {
         "number": "01",
@@ -50,25 +50,31 @@ from pyutil.pyrpc import PyRpc
             "Invalid": 0,
             "Total": 2,
             "Message": "ok"
-        }
+        },
+        "assert": "Update with valid data but get incorrect resp."
     }
 ])
-def test_update(gCfg, transferCfg, host, logger, tCase):
+def test_update(transferCfg, transferRpc, loggerName, tCase):
     """
     Functional test of RPC: Transfer.Update.
-    The function sends a RPC request and check the *dict* that ``expt <= resp``.
+    Send a RPC request and test if the resp is valid.
     
-    :param dict gCfg: Global config in json.
-    :param dict transferCfg: Transfer config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict transferCfg: Transfer config.
+    :param PyRpc transferRpc: A RPC client of transfer.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Update with valid data contains 1 metric to test if it is working normally.
+    01           Update with valid data contains 2 metrics to test if it is working normally.
+    ==========   ==============================================================
     """
     
     api = transferCfg['rpcApi']['update']
-    rpcClient = PyRpc(host, transferCfg['rpc'], logger)
     
-    r = rpcClient.call(api, tCase['data'])
+    r = transferRpc.call(api, tCase['data'], loggerName=loggerName)
     expt = tCase['expect']
     real = r['result']
-    assert expt.items() <= real.items()
+    assert expt.items() <= real.items(), tCase['assert']
