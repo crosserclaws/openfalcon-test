@@ -4,6 +4,7 @@
 import logging
 import pytest
 from pyutil import pytool
+from pyutil.pyrpc import PyRpc
 from pyutil.pyhttp import PyHttp
 
 def loadCfg(cfgName):
@@ -99,6 +100,51 @@ def feHttp(request, gCfg, feCfg):
     client.keepLoginInfo(gCfg['login'])
     return client
 
+@pytest.fixture(scope="session")
+def graphHttp(request, gCfg, graphCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else graphCfg['host']
+    client = PyHttp(host, graphCfg['http'])
+    client.keepLoginInfo(gCfg['login'])
+    return client
+
+@pytest.fixture(scope="session")
+def smtpHttp(request, gCfg, smtpCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else smtpCfg['host']
+    client = PyHttp(host, smtpCfg['http'])
+    client.keepLoginInfo(gCfg['login'])
+    return client
+
+@pytest.fixture(scope="session")
+def transferHttp(request, gCfg, transferCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else transferCfg['host']
+    client = PyHttp(host, transferCfg['http'])
+    client.keepLoginInfo(gCfg['login'])
+    return client
+
 ###
 # RPC Client
 ###
+
+@pytest.fixture(scope="session")
+def hbsRpc(request, gCfg, hbsCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else hbsCfg['host']
+    client = PyRpc(host, hbsCfg['rpc'])
+    return client
+
+@pytest.fixture(scope="session")
+def judgeRpc(request, gCfg, judgeCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else judgeCfg['host']
+    client = PyRpc(host, judgeCfg['rpc'])
+    return client
+
+@pytest.fixture(scope="session")
+def transferRpc(request, gCfg, transferCfg):
+    dev = request.config.getoption("--dev")
+    host = gCfg['host'] if dev else transferCfg['host']
+    client = PyRpc(host, transferCfg['rpc'])
+    return client
