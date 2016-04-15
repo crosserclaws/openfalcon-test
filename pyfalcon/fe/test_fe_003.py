@@ -2,7 +2,6 @@
 """ Functional test of HTTP: fe/user/query. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
