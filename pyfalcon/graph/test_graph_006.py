@@ -37,5 +37,7 @@ def test_indexUpdateAllConcurrent(graphCfg, graphHttp, loggerName, tCase):
     
     expt = tCase['expect']
     real = r.json()
+    exptType = type(expt['data'])
+    realType = type(real['data'])
     assert expt['msg'] == real['msg'], tCase['assert']
-    assert isinstance(real['data'], int), tCase['assert']
+    assert exptType == realType, tCase['assert']
