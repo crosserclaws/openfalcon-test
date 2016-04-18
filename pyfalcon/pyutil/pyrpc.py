@@ -16,6 +16,7 @@ class PyRpc(object):
     """
     
     _bufSize = 4096
+    _timeout = 2
 
     def __init__(self, host, port):
         self.host = host
@@ -25,6 +26,7 @@ class PyRpc(object):
         # Socket
         try:
             self._socket = socket.create_connection((host, port))
+            self._socket.settimeout(PyRpc._timeout)
         except Exception as e:
             self._createSuccess = False
             raise
@@ -55,7 +57,16 @@ class PyRpc(object):
         self._socket.sendall(msg.encode())
 
         # Need to receive multiple times if resp is bigger than buffer size.
-        resp = self._socket.recv(PyRpc._bufSize)
+        resp = b''
+        rec = b''
+        try:
+            while True:
+                rec = self._socket.recv(PyRpc._bufSize)
+                if not rec: break
+                resp += rec
+        except socket.timeout:
+            pass
+        
         if not resp:
             logger.debug("[RES<-] %s\n''(Empty_Response)", dest)
             return resp.decode()
