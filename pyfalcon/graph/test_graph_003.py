@@ -2,33 +2,38 @@
 """ Functional test of HTTP: graph/count. """
 
 import pytest
-from pyutil import pytool
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
         "number": "00",
         "data": {
         },
-        "expect": 0
+        "expect": 0,
+        "assert": "A valid call but receive invalid resp, API may have some problems."
     }
 ])
-def test_getCount(gCfg, graphCfg, host, logger, tCase):
+def test_getCount(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/count.
     The function sends a GET request; then checks if resp is an *integer*.
     
-    :param dict gCfg: Global config in json.
-    :param dict graphCfg: Graph config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict graphCfg: Graph config.
+    :param PyHttp graphHttp: A HTTP client of graph.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Send a valid call to test if it is working normally.
+    ==========   ==============================================================
     """
     
     kwargs = graphCfg['httpApi']['getCount']
-    httpClient = PyHttp(host, graphCfg['http'], logger)
-    r = httpClient.call(**kwargs)
+    r = graphHttp.call(**kwargs, loggerName=loggerName)
     
     expt = tCase['expect']
     real = r.json()
-    assert isinstance(real, int)
+    exptType = type(expt)
+    realType = type(real)
+    assert exptType == realType, tCase['assert']
