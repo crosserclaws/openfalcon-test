@@ -6,8 +6,7 @@ import pytest
 @pytest.mark.parametrize("tCase", [
     {
         "number": "00",
-        "data": {
-        },
+        "data": {},
         "expect": 0,
         "assert": "A valid call but receive invalid resp, API may have some problems."
     }

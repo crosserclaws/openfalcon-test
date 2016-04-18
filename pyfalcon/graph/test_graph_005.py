@@ -6,8 +6,7 @@ import pytest
 @pytest.mark.parametrize("tCase", [
     {
         "number": "00",
-        "data": {
-        },
+        "data": {},
         "expect": {
             "msg": "success",
             "data": "ok"
