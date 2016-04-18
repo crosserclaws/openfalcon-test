@@ -2,33 +2,35 @@
 """ Functional test of RPC: Hbs.GetStrategies. """
 
 import pytest
-from pyutil.pyrpc import PyRpc
 
 @pytest.mark.parametrize("tCase", [
     {
         "number": "00",
-        "data": {
-        },
-        "expect": {
-        }
+        "data": {},
+        "expect": {},
+        "assert": "A valid call but receive incorrect resp type, API may have some problems."
     }
 ])
-def test_getStrategies(gCfg, hbsCfg, host, logger, tCase):
+def test_getStrategies(hbsCfg, hbsRpc, loggerName, tCase):
     """
     Functional test of RPC: Hbs.GetStrategies.
-    The function sends a RPC request and check the *dict* that ``expt <= resp``.
+    Send a RPC request and test if expected element is in the resp.
     
-    :param dict gCfg: Global config in json.
-    :param dict hbsCfg: Hbs config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict hbsCfg: Hbs config.
+    :param PyHttp hbsRpc: A HTTP client of hbs.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Simply get strategies to test if it is working normally.
+    ==========   ==============================================================
     """
     
     api = hbsCfg['rpcApi']['getStrategies']
-    rpcClient = PyRpc(host, hbsCfg['rpc'], logger)
     
-    r = rpcClient.call(api, tCase['data'])
+    r = hbsRpc.call(api, tCase['data'], loggerName=loggerName)
     expt = tCase['expect']
     real = r.get('result')
-    assert expt.items() <= real.items() 
+    assert expt.items() <= real.items(), tCase['assert']

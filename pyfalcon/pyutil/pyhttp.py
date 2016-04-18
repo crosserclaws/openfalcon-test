@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ HTTP Client of Pyfalcon. """
 
+import logging
 import requests
 
 class PyHttp(object):
@@ -8,19 +9,15 @@ class PyHttp(object):
     
     :param str host: Server's IP.
     :param str port: Server's port.
-    :param logging.Logger logger: A logger for client to do logging.
     :raises: Exception.
     """
     
-    def __init__(self, host, port, logger):
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self.addr = 'http://{:s}:{:d}'.format(host, port)
-        # Logger
-        if logger is not None:
-            self.logger = logger
-        else:
-            raise Exception('Invalid logger argument.')
         
-    def call(self, api, payload=None, method='GET', needLogin=False):
+    def call(self, api, payload=None, method='GET', needLogin=False, loggerName=None):
         """ Send a HTTP call.
         
         :param str api: API of the HTTP request.
@@ -34,18 +31,19 @@ class PyHttp(object):
         r = None
         url = self.addr + api
         cookies = self.cookies if needLogin else None
+        logger = logging.getLogger(loggerName)
         
         if method == 'GET':
-            self.logger.debug('[GET.][REQ->] %s\n%s', api, payload)
+            logger.debug('[GET.][REQ->] %s\n%s', url, payload)
             r = requests.get(url, params=payload, cookies=cookies)
         elif method == 'POST':
-            self.logger.debug('[POST][REQ->] %s\n%s', api, payload)
+            logger.debug('[POST][REQ->] %s\n%s', url, payload)
             r = requests.post(url, data=payload, cookies=cookies)
         else:
             raise Exception('Invalid call argument.')
         
-        msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(api, r.status_code, r.text)
-        self.logger.debug(msg)
+        msg = "[HTTP][RES<-] {:s}\n{:d} {:s}".format(url, r.status_code, r.text)
+        logger.debug(msg)
         self.checkResp(r, msg)
         return r
         

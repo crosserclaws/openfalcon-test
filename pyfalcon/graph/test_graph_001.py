@@ -2,7 +2,6 @@
 """ Functional test of HTTP: graph/api/recv. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -13,7 +12,8 @@ from pyutil.pyhttp import PyHttp
         "expect": {
             "msg": "success",
             "data": "ok"
-        }
+        },
+        "assert": "A valid call but receive unexpected resp, API may have some problems."
     },
     {
         "number": "01",
@@ -23,33 +23,39 @@ from pyutil.pyhttp import PyHttp
         "expect": {
             "msg": "success",
             "data": "bad args"
-        }
+        },
+        "assert": "Give incorrect number of params but receive unexpected error msg."
     }
 ])
-def test_apiRecv(gCfg, graphCfg, host, logger, tCase):
+def test_apiRecv(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/api/recv.
-    The function sends a GET request; then tests resp `dict`.
+    Send a GET request; then test if the resp is valid.
     
-    :param dict gCfg: Global config in json.
-    :param dict graphCfg: Graph config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict graphCfg: Graph config.
+    :param PyHttp graphHttp: A HTTP client of graph.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
     
     .. note:: Make sure that the data should in the same order as
               **endpoint/metric/ts/step/dstype/value** whose types are str/str/int/int/str/float.
               
               Here is an URL example: HOST_ADDR/api/recv/host1/cpu.user/1456286162/60/GAUGE/0.3579.
+
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Send a valid call to test if it is working normally.
+    01           Send with incorrect number of params to test if it is working normally.
+    ==========   ==============================================================
     """
     
     # Special URL case
     kwargs = graphCfg['httpApi']['apiRecv']
-    httpClient = PyHttp(host, graphCfg['http'], logger)
     data = tCase['data']
     kwargs['api'] = kwargs['api'] + '/' + '/'.join(map(str, data))
-    r = httpClient.call(**kwargs)
+    r = graphHttp.call(**kwargs, loggerName=loggerName)
     
     expt = tCase['expect']
     real = r.json() 
-    assert expt == real
+    assert expt == real, tCase['assert']

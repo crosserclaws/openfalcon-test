@@ -2,7 +2,6 @@
 """ Functional test of HTTP: fe/auth/login. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -11,7 +10,8 @@ from pyutil.pyhttp import PyHttp
             "name": "root",
             "password": "error_password"
         },
-        "expect": "password error"
+        "expect": "password error",
+        "assert": "Login with incorrect pwd but get unexpected error msg."
     },
     {
         "number": "01",
@@ -19,7 +19,8 @@ from pyutil.pyhttp import PyHttp
             "name": "",
             "password": "arbitrary_pw"
         },
-        "expect": "name or password is blank"
+        "expect": "name or password is blank",
+        "assert": "Login with blank username but get unexpected error msg."
     },
     {
         "number": "02",
@@ -27,25 +28,32 @@ from pyutil.pyhttp import PyHttp
             "name": "arbitrary_user",
             "password": ""
         },
-        "expect": "name or password is blank"
+        "expect": "name or password is blank",
+        "assert": "Login with blank pwd but get unexpected error msg."
     }
 ])
-def test_authLogin(gCfg, feCfg, host, logger, tCase):
+def test_authLogin(feCfg, feHttp, loggerName, tCase):
     """
     Functional test of HTTP: fe/auth/login.
-    The function sends a POST request and check resp string.
+    Send a POST request and test the resp string.
     
-    :param dict gCfg: Global config in json.
-    :param dict feCfg: Fe config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict feCfg: Fe config.
+    :param PyHttp feHttp: A HTTP client of fe.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Login with incorrect pwd and get the expected error msg.
+    01           Login with blank username and get the expected error msg.
+    02           Login with blank pwd and get the expected error msg.
+    ==========   ==============================================================
     """
     
     kwargs = feCfg['httpApi']['authLogin']
-    httpClient = PyHttp(host, feCfg['http'], logger)
     
-    r = httpClient.call(payload=tCase['data'], **kwargs)
+    r = feHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
     expt = tCase['expect']
     real = r.json()['msg']
-    assert expt == real
+    assert expt == real, tCase['assert']
