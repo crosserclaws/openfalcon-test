@@ -1,0 +1,39 @@
+{
+    "host": "10.0.0.195",
+    "http": 6071,
+    "httpApi": {
+        "apiRecv": {
+            "method": "GET",
+            "api": "/api/recv",
+            "needLogin": false
+        },
+        "getConfig": {
+            "method": "GET",
+            "api": "/config",
+            "needLogin": false
+        },
+        "getCount": {
+            "method": "GET",
+            "api": "/count",
+            "needLogin": false
+        },
+        "getCounterAll": {
+            "method": "GET",
+            "api": "/counter/all",
+            "needLogin": false
+        },
+        "indexUpdateAll": {
+            "method": "GET",
+            "api": "/index/updateAll",
+            "needLogin": false
+        },
+        "indexUpdateAllConcurrent": {
+            "method": "GET",
+            "api": "/index/updateAll/concurrent",
+            "needLogin": false
+        }
+    },
+    "rpc": 6070,
+    "rpcApi": {
+    }
+}

@@ -2,7 +2,6 @@
 """ Functional test of HTTP: smtp/mail. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -12,7 +11,8 @@ from pyutil.pyhttp import PyHttp
             "subject": "fake-subject_00",
             "content": "fake-content_00."
         },
-        "expect": "Success."
+        "expect": "Success.",
+        "assert": "Mail with valid data but get unexpected msg."
     },
     {
         "number": "01",
@@ -21,24 +21,31 @@ from pyutil.pyhttp import PyHttp
             "subject": "fake-subject_01",
             "content": "fake-content_01."
         },
-        "expect": "Success."
+        "expect": "Success.",
+        "assert": "Mail with acceptably invalid data but get unexpected msg."
     }
 ])
-def test_sendMail(gCfg, smtpCfg, host, logger, tCase):
+def test_sendMail(smtpCfg, smtpHttp, loggerName, tCase):
     """
     Functional test of HTTP: smtp/mail.
-    The function sends a POST request and check if resp is ``Success.``.
+    Send a POST request and test the resp string.
     
-    :param dict gCfg: Global config in json.
-    :param dict smtpCfg: Smtp config in json.
-    :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param dict smtpCfg: Smtp config.
+    :param PyHttp smtpHttp: A HTTP client of smtp.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Mail with valid data to test if it is working normally.
+    01           Mail with acceptably invalid data to test if it is working normally.
+    ==========   ==============================================================
     """
-    kwargs = smtpCfg['httpApi']['sendMail']
-    httpClient = PyHttp(host, smtpCfg['http'], logger)
     
-    r = httpClient.call(payload=tCase['data'], **kwargs)
+    kwargs = smtpCfg['httpApi']['sendMail']
+    
+    r = smtpHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
     expt = tCase['expect']
     real = r.text
-    assert expt == real
+    assert expt == real, tCase['assert']

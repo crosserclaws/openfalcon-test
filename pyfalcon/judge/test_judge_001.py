@@ -2,7 +2,6 @@
 """ Functional test of RPC: Judge.Send. """
 
 import pytest
-from pyutil.pyrpc import PyRpc
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -17,7 +16,8 @@ from pyutil.pyrpc import PyRpc
                 "timestamp": 1234567890
             }
         ],
-        "expect": ""
+        "expect": "",
+        "assert": "A valid call but receive incorrect resp, API may have some problems."
     },
     {
         "number": "01",
@@ -39,24 +39,30 @@ from pyutil.pyrpc import PyRpc
                 "timestamp": 1234567891
             }
         ],
-        "expect": ""
+        "expect": "",
+        "assert": "A valid call but receive incorrect resp, API may have some problems."
     }
 ])
-def test_send(gCfg, judgeCfg, host, logger, tCase):
+def test_send(judgeCfg, judgeRpc, loggerName, tCase):
     """
     Functional test of RPC: Judge.Send.
-    The function sends a RPC request and check the ``void`` resp.
+    Send a RPC request and test if it is working normally..
     
-    :param dict gCfg: Global config in json.
-    :param dict judgeCfg: Judge config in json.
-    :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param dict judgeCfg: Judge config.
+    :param PyHttp judgeRpc: A HTTP client of judge.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Send valid data contains 1 metric to test if it is working normally.
+    01           Send valid data contains 2 metrics to test if it is working normally.
+    ==========   ==============================================================
     """
     
     api = judgeCfg['rpcApi']['send']
-    rpcClient = PyRpc(host, judgeCfg['rpc'], logger)
     
-    r = rpcClient.call(api, tCase['data'])
+    r = judgeRpc.call(api, tCase['data'], loggerName=loggerName)
     expt = tCase['expect']
-    assert expt == r
+    assert expt == r, tCase['assert']

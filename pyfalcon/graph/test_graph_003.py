@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Functional test of HTTP: alarm/event. """
+""" Functional test of HTTP: graph/count. """
 
 import pytest
 
@@ -7,17 +7,17 @@ import pytest
     {
         "number": "00",
         "data": {},
-        "expect":[],
-        "assert": "A valid call but receive incorrect resp type, API may have some problems."
+        "expect": 0,
+        "assert": "A valid call but receive invalid resp, API may have some problems."
     }
 ])
-def test_getEvent(alarmCfg, alarmHttp, loggerName, tCase):
+def test_getCount(graphCfg, graphHttp, loggerName, tCase):
     """
-    Functional test of HTTP: alarm/event which is login needed.
-    Send a GET request and test if expected element is in the resp.
+    Functional test of HTTP: graph/count.
+    Send a GET request; then test if the resp is an *integer*.
     
-    :param dict alarmCfg: Alarm config.
-    :param PyHttp alarmHttp: A HTTP client of alarm.
+    :param dict graphCfg: Graph config.
+    :param PyHttp graphHttp: A HTTP client of graph.
     :param str loggerName: Used for getting the custom logger.
     :param dict tCase: Data of a test case.
     
@@ -28,9 +28,11 @@ def test_getEvent(alarmCfg, alarmHttp, loggerName, tCase):
     ==========   ==============================================================
     """
     
-    kwargs = alarmCfg['httpApi']['getEvent']
+    kwargs = graphCfg['httpApi']['getCount']
+    r = graphHttp.call(**kwargs, loggerName=loggerName)
     
-    r = alarmHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
     expt = tCase['expect']
     real = r.json()
-    assert expt <= real, tCase['assert']
+    exptType = type(expt)
+    realType = type(real)
+    assert exptType == realType, tCase['assert']

@@ -7,6 +7,9 @@ Automated testing for Open-Falcon API in Python3.
 Need [pip3](https://github.com/pypa/pip) and dependent packages in *requirement.txt*.
 
     $ pip3 install -r requirements.txt
+You may need to add the path of python's binary directory into PATH. On **OS X**, for example
+
+    $ export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/3.5/bin
 
 ### Configuration
 Configurations are under **config/** dir, remember to set the **host address** of each components.

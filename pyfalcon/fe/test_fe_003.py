@@ -2,7 +2,6 @@
 """ Functional test of HTTP: fe/user/query. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -17,28 +16,36 @@ from pyutil.pyhttp import PyHttp
         "data": {
             "query": "userQuery00"
         },
-        "expect": "userQuery00"
+        "expect": "userQuery00",
+        "assert": "Give valid data to query user but get unexpected msg."
     }
 ])
-def test_userQuery(gCfg, feCfg, host, logger, tCase):
+def test_userQuery(feCfg, feHttp, loggerName, tCase):
     """
     Functional test of HTTP: fe/user/query.
-    The function sends a GET request and check resp string.
+    Send a GET request and test the resp string.
     
-    :param dict gCfg: Global config in json.
-    :param dict feCfg: Fe config in json.
-    :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param dict feCfg: Fe config.
+    :param PyHttp feHttp: A HTTP client of fe.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    **Precondition:**
+        * API ``userCreate`` is working normally.
+        * An account used for login have the authority to create user.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Query a user with valid data to test if it is working normally.
+    ==========   ==============================================================
     """
     
     aArgs = feCfg['httpApi']['userCreate']
     kwargs = feCfg['httpApi']['userQuery']
-    httpClient = PyHttp(host, feCfg['http'], logger)
-    httpClient.keepLoginInfo(gCfg['login'])
     
-    _ = httpClient.call(payload=tCase['assume']['userCreate'], **aArgs)
-    r = httpClient.call(payload=tCase['data'], **kwargs)
+    _ = feHttp.call(payload=tCase['assume']['userCreate'], **aArgs, loggerName=loggerName)
+    r = feHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
     
     real = None
     expt = tCase['expect']
@@ -48,4 +55,4 @@ def test_userQuery(gCfg, feCfg, host, logger, tCase):
         if expt == real:
             return
     # Raise AssertionError 
-    assert expt == real
+    assert expt == real, tCase['assert']

@@ -16,10 +16,17 @@ Contents:
    fe.test_fe_002
    fe.test_fe_003
    fe.test_fe_004
+   graph.test_graph_001
+   graph.test_graph_002
+   graph.test_graph_003
+   graph.test_graph_004
+   graph.test_graph_005
+   graph.test_graph_006
    hbs.test_hbs_001
    judge.test_judge_001
    smtp.test_smtp_001
    transfer.test_transfer_001
+   transfer.test_transfer_002
 
 
 Utilities:

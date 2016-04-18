@@ -3,6 +3,7 @@
 
 import json
 import socket
+import logging
 import itertools
 
 class PyRpc(object):
@@ -15,27 +16,26 @@ class PyRpc(object):
     """
     
     _bufSize = 4096
+    _timeout = 2
 
-    def __init__(self, host, port, logger):
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
         self._createSuccess = True
         self._id_iter = itertools.count()
         # Socket
         try:
             self._socket = socket.create_connection((host, port))
+            self._socket.settimeout(PyRpc._timeout)
         except Exception as e:
             self._createSuccess = False
             raise
-        # Logger
-        if logger is not None:
-            self.logger = logger
-        else:
-            raise Exception('Invalid logger argument.')
 
     def __del__(self):
         if self._createSuccess:
             self._socket.close()
 
-    def call(self, name, *params):
+    def call(self, name, *params, loggerName=None):
         """ Send a RPC call.
         
         :param str name: Method name of the RPC call.
@@ -49,19 +49,30 @@ class PyRpc(object):
             'params': list(params),
             'method': name
         }
-
         msg = json.dumps(req)
-        self.logger.debug("[REQ->] %s\n%s", name, msg)
+        dest = 'tcp://{:s}:{:d}/{:s}'.format(self.host, self.port, name)
+        logger = logging.getLogger(loggerName)
+        
+        logger.debug("[REQ->] %s\n%s", dest, msg)
         self._socket.sendall(msg.encode())
 
-        # This must loop if resp is bigger than buffer size
-        resp = self._socket.recv(PyRpc._bufSize)
+        # Need to receive multiple times if resp is bigger than buffer size.
+        resp = b''
+        rec = b''
+        try:
+            while True:
+                rec = self._socket.recv(PyRpc._bufSize)
+                if not rec: break
+                resp += rec
+        except socket.timeout:
+            pass
+        
         if not resp:
-            self.logger.debug("[RES<-] %s\n''(Empty_Response)", name)
+            logger.debug("[RES<-] %s\n''(Empty_Response)", dest)
             return resp.decode()
         
         resp = json.loads(resp.decode())
-        self.logger.debug("[RES<-] %s\n%s", name, resp)
+        logger.debug("[RES<-] %s\n%s", dest, resp)
         self.checkResp(resp, req.get('id'))
         return resp
     

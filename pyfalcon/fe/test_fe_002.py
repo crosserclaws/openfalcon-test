@@ -2,7 +2,6 @@
 """ Functional test of HTTP: fe/me/user/c. """
 
 import pytest
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -16,7 +15,8 @@ from pyutil.pyhttp import PyHttp
             "im": "",
             "qq": ""
         },
-        "expect": ""
+        "expect": "",
+        "assert": "Give valid data to create user but get unexpected msg."
     },
     {
         "number": "01",
@@ -29,30 +29,38 @@ from pyutil.pyhttp import PyHttp
             "im": "",
             "qq": ""
         },
-        "expect": "name pattern is invalid"
+        "expect": "name pattern is invalid",
+        "assert": "Give invalid username to create user but get unexpected msg."
     }
 ])
-def test_userCreate(gCfg, feCfg, host, logger, tCase):
+def test_userCreate(feCfg, feHttp, loggerName, tCase):
     """
     Functional test of HTTP: fe/me/user/c which is login needed.
-    The function sends a POST request and check resp string.
+    Send a POST request and test the resp string.
     
-    :param dict gCfg: Global config in json.
-    :param dict feCfg: Fe config in json.
-    :param str host: Host IP to send the request.
-    :param logger logger: A logger named in the module's name.
-    :param dict tetstCase: A test case in json.
+    :param dict feCfg: Fe config.
+    :param PyHttp feHttp: A HTTP client of fe.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
+    
+    **Precondition:**
+        * An account used for login have the authority to create user.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Create a user with valid data to test if it is working normally.
+    01           Create a user with invalid username and get the expected error msg.
+    ==========   ==============================================================
     """
     
     kwargs = feCfg['httpApi']['userCreate']
-    httpClient = PyHttp(host, feCfg['http'], logger)
     
-    httpClient.keepLoginInfo(gCfg['login'])
-    r = httpClient.call(payload=tCase['data'], **kwargs)
+    r = feHttp.call(payload=tCase['data'], **kwargs, loggerName=loggerName)
     expt = tCase['expect']
     real = r.json()['msg']
     try:
-        assert expt == real
+        assert expt == real, tCase['assert']
     except AssertionError as e:
         if expt == '' and real == 'name is already existent':
             pass
