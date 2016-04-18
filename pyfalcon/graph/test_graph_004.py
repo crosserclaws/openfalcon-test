@@ -17,7 +17,7 @@ import pytest
 def test_getCounterAll(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/counter/all.
-    The function sends a GET request; then checks success message and tests keys of every counter in resp.
+    Send a GET request; then test if counters are in resp.
     
     :param dict graphCfg: Graph config.
     :param PyHttp graphHttp: A HTTP client of graph.

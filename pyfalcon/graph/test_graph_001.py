@@ -30,7 +30,7 @@ import pytest
 def test_apiRecv(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/api/recv.
-    The function sends a GET request; then tests resp `dict`.
+    Send a GET request; then test if the resp is valid.
     
     :param dict graphCfg: Graph config.
     :param PyHttp graphHttp: A HTTP client of graph.

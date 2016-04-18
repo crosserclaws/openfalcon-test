@@ -14,7 +14,7 @@ import pytest
 def test_getCount(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/count.
-    The function sends a GET request; then checks if resp is an *integer*.
+    Send a GET request; then test if the resp is an *integer*.
     
     :param dict graphCfg: Graph config.
     :param PyHttp graphHttp: A HTTP client of graph.
