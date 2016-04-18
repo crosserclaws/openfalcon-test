@@ -24,7 +24,7 @@ def test_getEvent(alarmCfg, alarmHttp, loggerName, tCase):
     ==========   ==============================================================
     Case #       Description
     ==========   ==============================================================
-    00           Simply GET req to test if it is working normally.
+    00           Send a valid call to test if it is working normally.
     ==========   ==============================================================
     """
     
