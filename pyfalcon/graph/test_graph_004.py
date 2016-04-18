@@ -2,8 +2,6 @@
 """ Functional test of HTTP: graph/counter/all. """
 
 import pytest
-from pyutil import pytool
-from pyutil.pyhttp import PyHttp
 
 @pytest.mark.parametrize("tCase", [
     {
@@ -13,31 +11,36 @@ from pyutil.pyhttp import PyHttp
         "expect": {
             "msg": "success",
             "data": ["Name", "Cnt", "Time", "Other"]
-        }
+        },
+        "assert": "A valid call but receive invalid resp, API may have some problems."
     }
 ])
-def test_getCounterAll(gCfg, graphCfg, host, logger, tCase):
+def test_getCounterAll(graphCfg, graphHttp, loggerName, tCase):
     """
     Functional test of HTTP: graph/counter/all.
     The function sends a GET request; then checks success message and tests keys of every counter in resp.
     
-    :param dict gCfg: Global config in json.
-    :param dict graphCfg: Graph config in json.
-    :param str host: Host IP to send the request.
-    :param logging.Logger logger: A logger named in the module's name.
-    :param dict tCase: A test case in json.
+    :param dict graphCfg: Graph config.
+    :param PyHttp graphHttp: A HTTP client of graph.
+    :param str loggerName: Used for getting the custom logger.
+    :param dict tCase: Data of a test case.
     
-    .. note:: Ignore the "Qps" field in counter since not every counter owns that field. 
+    .. note:: Ignore the "Qps" field in counter since not every counter owns that field.
+    
+    ==========   ==============================================================
+    Case #       Description
+    ==========   ==============================================================
+    00           Send a valid call to test if it is working normally.
+    ==========   ==============================================================
     """
     
     kwargs = graphCfg['httpApi']['getCounterAll']
-    httpClient = PyHttp(host, graphCfg['http'], logger)
-    r = httpClient.call(**kwargs)
+    r = graphHttp.call(**kwargs, loggerName=loggerName)
     
     expt = tCase['expect']
     real = r.json()
-    assert expt['msg'] == real['msg']
+    assert expt['msg'] == real['msg'], tCase['assert']
     counters = real['data']
     exptSet = set(expt['data'])
     for cDict in counters:
-        assert exptSet <= set(cDict)
+        assert exptSet <= set(cDict), tCase['assert']
